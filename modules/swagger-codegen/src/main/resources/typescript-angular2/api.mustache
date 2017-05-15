@@ -47,7 +47,7 @@ export class {{classname}} {
                 if (response.status === 204) {
                     return undefined;
                 } else {
-                    return response.json();
+                    return response.json() || {};
                 }
             });
     }
@@ -205,9 +205,8 @@ export class {{classname}} {
             body: formParams.toString(),
 {{/hasFormParams}}
             search: queryParameters,
-            withCredentials:true
+            withCredentials:this.configuration.withCredentials
         });
-
         // https://github.com/swagger-api/swagger-codegen/issues/4037
         if (extraHttpRequestParams) {
             requestOptions = (<any>Object).assign(requestOptions, extraHttpRequestParams);
