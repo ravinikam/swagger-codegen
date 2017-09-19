@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.UUID;
 import org.joda.time.LocalDate;
 import javax.validation.constraints.*;
+import javax.validation.Valid;
 
 
 import io.swagger.annotations.*;
@@ -13,19 +14,19 @@ import java.util.Objects;
 
 public class FormatTest   {
   
-  private Integer integer = null;
-  private Integer int32 = null;
-  private Long int64 = null;
-  private BigDecimal number = null;
-  private Float _float = null;
-  private Double _double = null;
-  private String string = null;
-  private byte[] _byte = null;
-  private byte[] binary = null;
-  private LocalDate date = null;
-  private Date dateTime = null;
-  private UUID uuid = null;
-  private String password = null;
+  private @Valid Integer integer = null;
+  private @Valid Integer int32 = null;
+  private @Valid Long int64 = null;
+  private @Valid BigDecimal number = null;
+  private @Valid Float _float = null;
+  private @Valid Double _double = null;
+  private @Valid String string = null;
+  private @Valid byte[] _byte = null;
+  private @Valid byte[] binary = null;
+  private @Valid LocalDate date = null;
+  private @Valid Date dateTime = null;
+  private @Valid UUID uuid = null;
+  private @Valid String password = null;
 
   /**
    * minimum: 10
@@ -160,7 +161,7 @@ public class FormatTest   {
   
   @ApiModelProperty(required = true, value = "")
   @NotNull
-  public byte[] getByte() {
+ @Pattern(regexp="^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$")  public byte[] getByte() {
     return _byte;
   }
   public void setByte(byte[] _byte) {
@@ -312,3 +313,4 @@ public class FormatTest   {
     return o.toString().replace("\n", "\n    ");
   }
 }
+

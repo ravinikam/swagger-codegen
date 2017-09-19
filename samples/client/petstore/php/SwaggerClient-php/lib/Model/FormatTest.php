@@ -6,7 +6,7 @@
  *
  * @category Class
  * @package  Swagger\Client
- * @author   Swaagger Codegen team
+ * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
 
@@ -39,7 +39,7 @@ use \ArrayAccess;
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
  */
-class FormatTest implements ArrayAccess
+class FormatTest implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -69,9 +69,44 @@ class FormatTest implements ArrayAccess
         'password' => 'string'
     ];
 
+    /**
+      * Array of property to format mappings. Used for (de)serialization
+      * @var string[]
+      */
+    protected static $swaggerFormats = [
+        'integer' => null,
+        'int32' => 'int32',
+        'int64' => 'int64',
+        'number' => null,
+        'float' => 'float',
+        'double' => 'double',
+        'string' => null,
+        'byte' => 'byte',
+        'binary' => 'binary',
+        'date' => 'date',
+        'date_time' => 'date-time',
+        'uuid' => 'uuid',
+        'password' => 'password'
+    ];
+
+    /**
+     * Array of property to type mappings. Used for (de)serialization
+     *
+     * @return array
+     */
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
+    }
+
+    /**
+     * Array of property to format mappings. Used for (de)serialization
+     *
+     * @return array
+     */
+    public static function swaggerFormats()
+    {
+        return self::$swaggerFormats;
     }
 
     /**
@@ -94,7 +129,6 @@ class FormatTest implements ArrayAccess
         'password' => 'password'
     ];
 
-
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
@@ -114,7 +148,6 @@ class FormatTest implements ArrayAccess
         'uuid' => 'setUuid',
         'password' => 'setPassword'
     ];
-
 
     /**
      * Array of attributes to getter functions (for serialization of requests)
@@ -136,19 +169,44 @@ class FormatTest implements ArrayAccess
         'password' => 'getPassword'
     ];
 
+    /**
+     * Array of attributes where the key is the local name, and the value is the original name
+     *
+     * @return array
+     */
     public static function attributeMap()
     {
         return self::$attributeMap;
     }
 
+    /**
+     * Array of attributes to setter functions (for deserialization of responses)
+     *
+     * @return array
+     */
     public static function setters()
     {
         return self::$setters;
     }
 
+    /**
+     * Array of attributes to getter functions (for serialization of requests)
+     *
+     * @return array
+     */
     public static function getters()
     {
         return self::$getters;
+    }
+
+    /**
+     * The original name of the model.
+     *
+     * @return string
+     */
+    public function getModelName()
+    {
+        return self::$swaggerModelName;
     }
 
     
@@ -183,7 +241,7 @@ class FormatTest implements ArrayAccess
     }
 
     /**
-     * show all the invalid properties with reasons.
+     * Show all the invalid properties with reasons.
      *
      * @return array invalid properties with reasons
      */
@@ -241,6 +299,10 @@ class FormatTest implements ArrayAccess
         if ($this->container['byte'] === null) {
             $invalid_properties[] = "'byte' can't be null";
         }
+        if (!preg_match("/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/", $this->container['byte'])) {
+            $invalid_properties[] = "invalid value for 'byte', must be conform to the pattern /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/.";
+        }
+
         if ($this->container['date'] === null) {
             $invalid_properties[] = "'date' can't be null";
         }
@@ -304,6 +366,9 @@ class FormatTest implements ArrayAccess
             return false;
         }
         if ($this->container['byte'] === null) {
+            return false;
+        }
+        if (!preg_match("/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/", $this->container['byte'])) {
             return false;
         }
         if ($this->container['date'] === null) {
@@ -530,6 +595,11 @@ class FormatTest implements ArrayAccess
      */
     public function setByte($byte)
     {
+
+        if ((!preg_match("/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/", $byte))) {
+            throw new \InvalidArgumentException("invalid value for $byte when calling FormatTest., must conform to the pattern /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/.");
+        }
+
         $this->container['byte'] = $byte;
 
         return $this;

@@ -6,7 +6,7 @@
  *
  * @category Class
  * @package  Swagger\Client
- * @author   Swaagger Codegen team
+ * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
 
@@ -39,7 +39,7 @@ use \ArrayAccess;
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
  */
-class ArrayOfNumberOnly implements ArrayAccess
+class ArrayOfNumberOnly implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -57,9 +57,32 @@ class ArrayOfNumberOnly implements ArrayAccess
         'array_number' => 'float[]'
     ];
 
+    /**
+      * Array of property to format mappings. Used for (de)serialization
+      * @var string[]
+      */
+    protected static $swaggerFormats = [
+        'array_number' => null
+    ];
+
+    /**
+     * Array of property to type mappings. Used for (de)serialization
+     *
+     * @return array
+     */
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
+    }
+
+    /**
+     * Array of property to format mappings. Used for (de)serialization
+     *
+     * @return array
+     */
+    public static function swaggerFormats()
+    {
+        return self::$swaggerFormats;
     }
 
     /**
@@ -70,7 +93,6 @@ class ArrayOfNumberOnly implements ArrayAccess
         'array_number' => 'ArrayNumber'
     ];
 
-
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
@@ -78,7 +100,6 @@ class ArrayOfNumberOnly implements ArrayAccess
     protected static $setters = [
         'array_number' => 'setArrayNumber'
     ];
-
 
     /**
      * Array of attributes to getter functions (for serialization of requests)
@@ -88,19 +109,44 @@ class ArrayOfNumberOnly implements ArrayAccess
         'array_number' => 'getArrayNumber'
     ];
 
+    /**
+     * Array of attributes where the key is the local name, and the value is the original name
+     *
+     * @return array
+     */
     public static function attributeMap()
     {
         return self::$attributeMap;
     }
 
+    /**
+     * Array of attributes to setter functions (for deserialization of responses)
+     *
+     * @return array
+     */
     public static function setters()
     {
         return self::$setters;
     }
 
+    /**
+     * Array of attributes to getter functions (for serialization of requests)
+     *
+     * @return array
+     */
     public static function getters()
     {
         return self::$getters;
+    }
+
+    /**
+     * The original name of the model.
+     *
+     * @return string
+     */
+    public function getModelName()
+    {
+        return self::$swaggerModelName;
     }
 
     
@@ -123,7 +169,7 @@ class ArrayOfNumberOnly implements ArrayAccess
     }
 
     /**
-     * show all the invalid properties with reasons.
+     * Show all the invalid properties with reasons.
      *
      * @return array invalid properties with reasons
      */

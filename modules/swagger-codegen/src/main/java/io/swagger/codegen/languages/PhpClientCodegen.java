@@ -117,6 +117,7 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
         typeMapping.put("string", "string");
         typeMapping.put("byte", "int");
         typeMapping.put("boolean", "bool");
+        typeMapping.put("date", "\\DateTime");
         typeMapping.put("Date", "\\DateTime");
         typeMapping.put("DateTime", "\\DateTime");
         typeMapping.put("file", "\\SplFileObject");
@@ -300,12 +301,12 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
         // make test path available in mustache template
         additionalProperties.put("testBasePath", testBasePath);
 
-        supportingFiles.add(new SupportingFile("configuration.mustache", toPackagePath(invokerPackage, srcBasePath), "Configuration.php"));
-        supportingFiles.add(new SupportingFile("ApiClient.mustache", toPackagePath(invokerPackage, srcBasePath), "ApiClient.php"));
         supportingFiles.add(new SupportingFile("ApiException.mustache", toPackagePath(invokerPackage, srcBasePath), "ApiException.php"));
+        supportingFiles.add(new SupportingFile("Configuration.mustache", toPackagePath(invokerPackage, srcBasePath), "Configuration.php"));
         supportingFiles.add(new SupportingFile("ObjectSerializer.mustache", toPackagePath(invokerPackage, srcBasePath), "ObjectSerializer.php"));
+        supportingFiles.add(new SupportingFile("ModelInterface.mustache", toPackagePath(modelPackage, srcBasePath), "ModelInterface.php"));
+        supportingFiles.add(new SupportingFile("HeaderSelector.mustache", toPackagePath(invokerPackage, srcBasePath), "HeaderSelector.php"));
         supportingFiles.add(new SupportingFile("composer.mustache", getPackagePath(), "composer.json"));
-        supportingFiles.add(new SupportingFile("autoload.mustache", getPackagePath(), "autoload.php"));
         supportingFiles.add(new SupportingFile("README.mustache", getPackagePath(), "README.md"));
         supportingFiles.add(new SupportingFile("phpunit.xml.mustache", getPackagePath(), "phpunit.xml.dist"));
         supportingFiles.add(new SupportingFile(".travis.yml", getPackagePath(), ".travis.yml"));

@@ -6,7 +6,7 @@
  *
  * @category Class
  * @package  Swagger\Client
- * @author   Swaagger Codegen team
+ * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
 
@@ -39,7 +39,7 @@ use \ArrayAccess;
  * @author      Swagger Codegen team
  * @link        https://github.com/swagger-api/swagger-codegen
  */
-class ApiResponse implements ArrayAccess
+class ApiResponse implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -59,9 +59,34 @@ class ApiResponse implements ArrayAccess
         'message' => 'string'
     ];
 
+    /**
+      * Array of property to format mappings. Used for (de)serialization
+      * @var string[]
+      */
+    protected static $swaggerFormats = [
+        'code' => 'int32',
+        'type' => null,
+        'message' => null
+    ];
+
+    /**
+     * Array of property to type mappings. Used for (de)serialization
+     *
+     * @return array
+     */
     public static function swaggerTypes()
     {
         return self::$swaggerTypes;
+    }
+
+    /**
+     * Array of property to format mappings. Used for (de)serialization
+     *
+     * @return array
+     */
+    public static function swaggerFormats()
+    {
+        return self::$swaggerFormats;
     }
 
     /**
@@ -74,7 +99,6 @@ class ApiResponse implements ArrayAccess
         'message' => 'message'
     ];
 
-
     /**
      * Array of attributes to setter functions (for deserialization of responses)
      * @var string[]
@@ -84,7 +108,6 @@ class ApiResponse implements ArrayAccess
         'type' => 'setType',
         'message' => 'setMessage'
     ];
-
 
     /**
      * Array of attributes to getter functions (for serialization of requests)
@@ -96,19 +119,44 @@ class ApiResponse implements ArrayAccess
         'message' => 'getMessage'
     ];
 
+    /**
+     * Array of attributes where the key is the local name, and the value is the original name
+     *
+     * @return array
+     */
     public static function attributeMap()
     {
         return self::$attributeMap;
     }
 
+    /**
+     * Array of attributes to setter functions (for deserialization of responses)
+     *
+     * @return array
+     */
     public static function setters()
     {
         return self::$setters;
     }
 
+    /**
+     * Array of attributes to getter functions (for serialization of requests)
+     *
+     * @return array
+     */
     public static function getters()
     {
         return self::$getters;
+    }
+
+    /**
+     * The original name of the model.
+     *
+     * @return string
+     */
+    public function getModelName()
+    {
+        return self::$swaggerModelName;
     }
 
     
@@ -133,7 +181,7 @@ class ApiResponse implements ArrayAccess
     }
 
     /**
-     * show all the invalid properties with reasons.
+     * Show all the invalid properties with reasons.
      *
      * @return array invalid properties with reasons
      */

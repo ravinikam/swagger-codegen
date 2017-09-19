@@ -2,6 +2,7 @@ package io.swagger.model;
 
 import io.swagger.model.Animal;
 import javax.validation.constraints.*;
+import javax.validation.Valid;
 
 
 import io.swagger.annotations.*;
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 public class Dog extends Animal  {
   
-  private String breed = null;
+  private @Valid String breed = null;
 
   /**
    **/
@@ -67,3 +68,4 @@ public class Dog extends Animal  {
     return o.toString().replace("\n", "\n    ");
   }
 }
+
