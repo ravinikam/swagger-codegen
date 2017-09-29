@@ -1,0 +1,33 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0  https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  	<proxies>
+   		<proxy>
+      			<id>httpProxy</id>
+      			<active>true</active>
+      			<protocol>http</protocol>
+      			<host>http-proxy-3gtm.health.ge.com</host>
+      			<port>9400</port>
+			<nonProxyHosts>*.ge.com|localhost</nonProxyHosts>
+    		</proxy>
+   		<proxy>
+      			<id>httpsProxy</id>
+      			<active>true</active>
+      			<protocol>https</protocol>
+      			<host>http-proxy-3gtm.health.ge.com</host>
+      			<port>9400</port>
+			<nonProxyHosts>*.ge.com|localhost</nonProxyHosts>
+    		</proxy>
+  	</proxies>	
+	<servers>
+        	<server>
+          		<id>swcoealppcr01</id>
+		</server>
+	</servers>
+	<mirrors>
+		<mirror>
+	      		<id>swcoealppcr01</id>
+	      		<name>Artifactory</name>
+	      		<url>https://hc-us-east-aws-artifactory.cloud.health.ge.com/artifactory/maven-ext</url>
+	      		<mirrorOf>external:*,!3rdParty.proxy</mirrorOf>
+	    	</mirror>
+	</mirrors>
+</settings>
