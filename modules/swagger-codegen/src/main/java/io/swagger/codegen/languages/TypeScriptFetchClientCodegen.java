@@ -18,6 +18,7 @@ public class TypeScriptFetchClientCodegen extends AbstractTypeScriptClientCodege
     public static final String NPM_VERSION = "npmVersion";
     public static final String NPM_REPOSITORY = "npmRepository";
     public static final String SNAPSHOT = "snapshot";
+    public static final String WITH_INTERFACES = "withInterfaces";
 
     protected String npmName = null;
     protected String npmVersion = "1.0.0";
@@ -37,6 +38,7 @@ public class TypeScriptFetchClientCodegen extends AbstractTypeScriptClientCodege
         this.cliOptions.add(new CliOption(NPM_VERSION, "The version of your npm package"));
         this.cliOptions.add(new CliOption(NPM_REPOSITORY, "Use this property to set an url your private npmRepo in the package.json"));
         this.cliOptions.add(new CliOption(SNAPSHOT, "When setting this property to true the version will be suffixed with -SNAPSHOT.yyyyMMddHHmm", BooleanProperty.TYPE).defaultValue(Boolean.FALSE.toString()));
+        this.cliOptions.add(new CliOption(WITH_INTERFACES, "Setting this property to true will generate interfaces next to the default class implementations.", BooleanProperty.TYPE).defaultValue(Boolean.FALSE.toString()));
     }
 
     @Override
@@ -51,6 +53,7 @@ public class TypeScriptFetchClientCodegen extends AbstractTypeScriptClientCodege
         supportingFiles.add(new SupportingFile("index.mustache", "", "index.ts"));
         supportingFiles.add(new SupportingFile("api.mustache", "", "api.ts"));
         supportingFiles.add(new SupportingFile("configuration.mustache", "", "configuration.ts"));
+        supportingFiles.add(new SupportingFile("custom.d.mustache", "", "custom.d.ts"));
         supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
         supportingFiles.add(new SupportingFile("gitignore", "", ".gitignore"));
 

@@ -8,7 +8,8 @@
 import Foundation
 
 
-open class MapTest: Codable {
+
+public struct MapTest: Codable {
 
     public enum MapOfEnumString: String, Codable { 
         case upper = "UPPER"
@@ -17,12 +18,16 @@ open class MapTest: Codable {
     public var mapMapOfString: [String:[String:String]]?
     public var mapOfEnumString: [String:String]?
 
-    public init() {}
+    public init(mapMapOfString: [String:[String:String]]?, mapOfEnumString: [String:String]?) {
+        self.mapMapOfString = mapMapOfString
+        self.mapOfEnumString = mapOfEnumString
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case mapMapOfString = "map_map_of_string"
         case mapOfEnumString = "map_of_enum_string"
     }
 
+
 }
+

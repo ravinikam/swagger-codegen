@@ -8,7 +8,8 @@
 import Foundation
 
 
-open class EnumArrays: Codable {
+
+public struct EnumArrays: Codable {
 
     public enum JustSymbol: String, Codable { 
         case greaterThanOrEqualTo = ">="
@@ -21,12 +22,16 @@ open class EnumArrays: Codable {
     public var justSymbol: JustSymbol?
     public var arrayEnum: [ArrayEnum]?
 
-    public init() {}
+    public init(justSymbol: JustSymbol?, arrayEnum: [ArrayEnum]?) {
+        self.justSymbol = justSymbol
+        self.arrayEnum = arrayEnum
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case justSymbol = "just_symbol"
         case arrayEnum = "array_enum"
     }
 
+
 }
+

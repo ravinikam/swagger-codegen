@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import request = require('request');
+import localVarRequest = require('request');
 import http = require('http');
 import Promise = require('bluebird');
 
@@ -72,7 +72,7 @@ class ObjectSerializer {
         } else if (type.lastIndexOf("Array<", 0) === 0) { // string.startsWith pre es6
             let subType: string = type.replace("Array<", ""); // Array<Type> => Type>
             subType = subType.substring(0, subType.length - 1); // Type> => Type
-            let transformedData = [];
+            let transformedData: any[] = [];
             for (let index in data) {
                 let date = data[index];
                 transformedData.push(ObjectSerializer.serialize(date, subType));
@@ -90,7 +90,7 @@ class ObjectSerializer {
 
             // get the map for the correct type.
             let attributeTypes = typeMap[type].getAttributeTypeMap();
-            let instance = {};
+            let instance: {[index: string]: any} = {};
             for (let index in attributeTypes) {
                 let attributeType = attributeTypes[index];
                 instance[attributeType.baseName] = ObjectSerializer.serialize(data[attributeType.name], attributeType.type);
@@ -109,7 +109,7 @@ class ObjectSerializer {
         } else if (type.lastIndexOf("Array<", 0) === 0) { // string.startsWith pre es6
             let subType: string = type.replace("Array<", ""); // Array<Type> => Type>
             subType = subType.substring(0, subType.length - 1); // Type> => Type
-            let transformedData = [];
+            let transformedData: any[] = [];
             for (let index in data) {
                 let date = data[index];
                 transformedData.push(ObjectSerializer.deserialize(date, subType));
@@ -137,14 +137,43 @@ class ObjectSerializer {
 }
 
 /**
+* some description 
+*/
+export class Amount {
+    /**
+    * some description 
+    */
+    'value': number;
+    'currency': Currency;
+
+    static discriminator: string | undefined = undefined;
+
+    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
+        {
+            "name": "value",
+            "baseName": "value",
+            "type": "number"
+        },
+        {
+            "name": "currency",
+            "baseName": "currency",
+            "type": "Currency"
+        }    ];
+
+    static getAttributeTypeMap() {
+        return Amount.attributeTypeMap;
+    }
+}
+
+/**
 * Describes the result of uploading an image resource
 */
 export class ApiResponse {
-    'code': number;
-    'type': string;
-    'message': string;
+    'code'?: number;
+    'type'?: string;
+    'message'?: string;
 
-    static discriminator = undefined;
+    static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
@@ -172,10 +201,10 @@ export class ApiResponse {
 * A category for a pet
 */
 export class Category {
-    'id': number;
-    'name': string;
+    'id'?: number;
+    'name'?: string;
 
-    static discriminator = undefined;
+    static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
@@ -195,20 +224,35 @@ export class Category {
 }
 
 /**
+* some description 
+*/
+export class Currency {
+
+    static discriminator: string | undefined = undefined;
+
+    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
+    ];
+
+    static getAttributeTypeMap() {
+        return Currency.attributeTypeMap;
+    }
+}
+
+/**
 * An order for a pets from the pet store
 */
 export class Order {
-    'id': number;
-    'petId': number;
-    'quantity': number;
-    'shipDate': Date;
+    'id'?: number;
+    'petId'?: number;
+    'quantity'?: number;
+    'shipDate'?: Date;
     /**
     * Order Status
     */
-    'status': Order.StatusEnum;
-    'complete': boolean;
+    'status'?: Order.StatusEnum;
+    'complete'?: boolean;
 
-    static discriminator = undefined;
+    static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
@@ -258,17 +302,17 @@ export namespace Order {
 * A pet for sale in the pet store
 */
 export class Pet {
-    'id': number;
-    'category': Category;
+    'id'?: number;
+    'category'?: Category;
     'name': string;
     'photoUrls': Array<string>;
-    'tags': Array<Tag>;
+    'tags'?: Array<Tag>;
     /**
     * pet status in the store
     */
-    'status': Pet.StatusEnum;
+    'status'?: Pet.StatusEnum;
 
-    static discriminator = undefined;
+    static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
@@ -318,10 +362,10 @@ export namespace Pet {
 * A tag for a pet
 */
 export class Tag {
-    'id': number;
-    'name': string;
+    'id'?: number;
+    'name'?: string;
 
-    static discriminator = undefined;
+    static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
@@ -344,19 +388,19 @@ export class Tag {
 * A User who is purchasing from the pet store
 */
 export class User {
-    'id': number;
-    'username': string;
-    'firstName': string;
-    'lastName': string;
-    'email': string;
-    'password': string;
-    'phone': string;
+    'id'?: number;
+    'username'?: string;
+    'firstName'?: string;
+    'lastName'?: string;
+    'email'?: string;
+    'password'?: string;
+    'phone'?: string;
     /**
     * User Status
     */
-    'userStatus': number;
+    'userStatus'?: number;
 
-    static discriminator = undefined;
+    static discriminator: string | undefined = undefined;
 
     static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
         {
@@ -406,14 +450,16 @@ export class User {
 }
 
 
-let enumsMap = {
-    "Order.StatusEnum": Order.StatusEnum,
-    "Pet.StatusEnum": Pet.StatusEnum,
+let enumsMap: {[index: string]: any} = {
+        "Order.StatusEnum": Order.StatusEnum,
+        "Pet.StatusEnum": Pet.StatusEnum,
 }
 
-let typeMap = {
+let typeMap: {[index: string]: any} = {
+    "Amount": Amount,
     "ApiResponse": ApiResponse,
     "Category": Category,
+    "Currency": Currency,
     "Order": Order,
     "Pet": Pet,
     "Tag": Tag,
@@ -424,13 +470,14 @@ export interface Authentication {
     /**
     * Apply authentication settings to header and query params.
     */
-    applyToRequest(requestOptions: request.Options): void;
+    applyToRequest(requestOptions: localVarRequest.Options): void;
 }
 
 export class HttpBasicAuth implements Authentication {
-    public username: string;
-    public password: string;
-    applyToRequest(requestOptions: request.Options): void {
+    public username: string = '';
+    public password: string = '';
+
+    applyToRequest(requestOptions: localVarRequest.Options): void {
         requestOptions.auth = {
             username: this.username, password: this.password
         }
@@ -438,12 +485,12 @@ export class HttpBasicAuth implements Authentication {
 }
 
 export class ApiKeyAuth implements Authentication {
-    public apiKey: string;
+    public apiKey: string = '';
 
     constructor(private location: string, private paramName: string) {
     }
 
-    applyToRequest(requestOptions: request.Options): void {
+    applyToRequest(requestOptions: localVarRequest.Options): void {
         if (this.location == "query") {
             (<any>requestOptions.qs)[this.paramName] = this.apiKey;
         } else if (this.location == "header" && requestOptions && requestOptions.headers) {
@@ -453,9 +500,9 @@ export class ApiKeyAuth implements Authentication {
 }
 
 export class OAuth implements Authentication {
-    public accessToken: string;
+    public accessToken: string = '';
 
-    applyToRequest(requestOptions: request.Options): void {
+    applyToRequest(requestOptions: localVarRequest.Options): void {
         if (requestOptions && requestOptions.headers) {
             requestOptions.headers["Authorization"] = "Bearer " + this.accessToken;
         }
@@ -463,9 +510,10 @@ export class OAuth implements Authentication {
 }
 
 export class VoidAuth implements Authentication {
-    public username: string;
-    public password: string;
-    applyToRequest(_: request.Options): void {
+    public username: string = '';
+    public password: string = '';
+
+    applyToRequest(_: localVarRequest.Options): void {
         // Do nothing
     }
 }
@@ -515,7 +563,7 @@ export class PetApi {
     }
 
     public setApiKey(key: PetApiApiKeys, value: string) {
-        this.authentications[PetApiApiKeys[key]].apiKey = value;
+        (this.authentications as any)[PetApiApiKeys[key]].apiKey = value;
     }
 
     set accessToken(token: string) {
@@ -525,49 +573,50 @@ export class PetApi {
      * 
      * @summary Add a new pet to the store
      * @param body Pet object that needs to be added to the store
+     * @param {*} [options] Override http request options.
      */
-    public addPet (body: Pet) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public addPet (body: Pet, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/pet';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling addPet.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'POST',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(body, "Pet")
         };
 
-        this.authentications.petstore_auth.applyToRequest(requestOptions);
+        this.authentications.petstore_auth.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -581,50 +630,51 @@ export class PetApi {
      * @summary Deletes a pet
      * @param petId Pet id to delete
      * @param apiKey 
+     * @param {*} [options] Override http request options.
      */
-    public deletePet (petId: number, apiKey?: string) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public deletePet (petId: number, apiKey?: string, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/pet/{petId}'
-            .replace('{' + 'petId' + '}', String(petId));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'petId' + '}', encodeURIComponent(String(petId)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'petId' is not null or undefined
         if (petId === null || petId === undefined) {
             throw new Error('Required parameter petId was null or undefined when calling deletePet.');
         }
 
-        headerParams['api_key'] = ObjectSerializer.serialize(apiKey, "string");
+        localVarHeaderParams['api_key'] = ObjectSerializer.serialize(apiKey, "string");
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'DELETE',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.petstore_auth.applyToRequest(requestOptions);
+        this.authentications.petstore_auth.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -637,13 +687,13 @@ export class PetApi {
      * Multiple status values can be provided with comma separated strings
      * @summary Finds Pets by status
      * @param status Status values that need to be considered for filter
+     * @param {*} [options] Override http request options.
      */
-    public findPetsByStatus (status: Array<string>) : Promise<{ response: http.ClientResponse; body: Array<Pet>;  }> {
+    public findPetsByStatus (status: Array<'available' | 'pending' | 'sold'>, options: any = {}) : Promise<{ response: http.ClientResponse; body: Array<Pet>;  }> {
         const localVarPath = this.basePath + '/pet/findByStatus';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'status' is not null or undefined
         if (status === null || status === undefined) {
@@ -651,39 +701,40 @@ export class PetApi {
         }
 
         if (status !== undefined) {
-            queryParameters['status'] = ObjectSerializer.serialize(status, "Array<string>");
+            localVarQueryParameters['status'] = ObjectSerializer.serialize(status, "Array<'available' | 'pending' | 'sold'>");
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'GET',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.petstore_auth.applyToRequest(requestOptions);
+        this.authentications.petstore_auth.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: Array<Pet>;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "Array<Pet>");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -696,13 +747,13 @@ export class PetApi {
      * Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
      * @summary Finds Pets by tags
      * @param tags Tags to filter by
+     * @param {*} [options] Override http request options.
      */
-    public findPetsByTags (tags: Array<string>) : Promise<{ response: http.ClientResponse; body: Array<Pet>;  }> {
+    public findPetsByTags (tags: Array<string>, options: any = {}) : Promise<{ response: http.ClientResponse; body: Array<Pet>;  }> {
         const localVarPath = this.basePath + '/pet/findByTags';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'tags' is not null or undefined
         if (tags === null || tags === undefined) {
@@ -710,39 +761,40 @@ export class PetApi {
         }
 
         if (tags !== undefined) {
-            queryParameters['tags'] = ObjectSerializer.serialize(tags, "Array<string>");
+            localVarQueryParameters['tags'] = ObjectSerializer.serialize(tags, "Array<string>");
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'GET',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.petstore_auth.applyToRequest(requestOptions);
+        this.authentications.petstore_auth.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: Array<Pet>;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "Array<Pet>");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -755,50 +807,51 @@ export class PetApi {
      * Returns a single pet
      * @summary Find pet by ID
      * @param petId ID of pet to return
+     * @param {*} [options] Override http request options.
      */
-    public getPetById (petId: number) : Promise<{ response: http.ClientResponse; body: Pet;  }> {
+    public getPetById (petId: number, options: any = {}) : Promise<{ response: http.ClientResponse; body: Pet;  }> {
         const localVarPath = this.basePath + '/pet/{petId}'
-            .replace('{' + 'petId' + '}', String(petId));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'petId' + '}', encodeURIComponent(String(petId)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'petId' is not null or undefined
         if (petId === null || petId === undefined) {
             throw new Error('Required parameter petId was null or undefined when calling getPetById.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'GET',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.api_key.applyToRequest(requestOptions);
+        this.authentications.api_key.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: Pet;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "Pet");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -811,49 +864,50 @@ export class PetApi {
      * 
      * @summary Update an existing pet
      * @param body Pet object that needs to be added to the store
+     * @param {*} [options] Override http request options.
      */
-    public updatePet (body: Pet) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public updatePet (body: Pet, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/pet';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling updatePet.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'PUT',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(body, "Pet")
         };
 
-        this.authentications.petstore_auth.applyToRequest(requestOptions);
+        this.authentications.petstore_auth.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -868,57 +922,58 @@ export class PetApi {
      * @param petId ID of pet that needs to be updated
      * @param name Updated name of the pet
      * @param status Updated status of the pet
+     * @param {*} [options] Override http request options.
      */
-    public updatePetWithForm (petId: number, name?: string, status?: string) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public updatePetWithForm (petId: number, name?: string, status?: string, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/pet/{petId}'
-            .replace('{' + 'petId' + '}', String(petId));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'petId' + '}', encodeURIComponent(String(petId)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'petId' is not null or undefined
         if (petId === null || petId === undefined) {
             throw new Error('Required parameter petId was null or undefined when calling updatePetWithForm.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
         if (name !== undefined) {
-            formParams['name'] = ObjectSerializer.serialize(name, "string");
+            localVarFormParams['name'] = ObjectSerializer.serialize(name, "string");
         }
 
         if (status !== undefined) {
-            formParams['status'] = ObjectSerializer.serialize(status, "string");
+            localVarFormParams['status'] = ObjectSerializer.serialize(status, "string");
         }
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'POST',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.petstore_auth.applyToRequest(requestOptions);
+        this.authentications.petstore_auth.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -933,59 +988,60 @@ export class PetApi {
      * @param petId ID of pet to update
      * @param additionalMetadata Additional data to pass to server
      * @param file file to upload
+     * @param {*} [options] Override http request options.
      */
-    public uploadFile (petId: number, additionalMetadata?: string, file?: Buffer) : Promise<{ response: http.ClientResponse; body: ApiResponse;  }> {
+    public uploadFile (petId: number, additionalMetadata?: string, file?: Buffer, options: any = {}) : Promise<{ response: http.ClientResponse; body: ApiResponse;  }> {
         const localVarPath = this.basePath + '/pet/{petId}/uploadImage'
-            .replace('{' + 'petId' + '}', String(petId));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'petId' + '}', encodeURIComponent(String(petId)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'petId' is not null or undefined
         if (petId === null || petId === undefined) {
             throw new Error('Required parameter petId was null or undefined when calling uploadFile.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
         if (additionalMetadata !== undefined) {
-            formParams['additionalMetadata'] = ObjectSerializer.serialize(additionalMetadata, "string");
+            localVarFormParams['additionalMetadata'] = ObjectSerializer.serialize(additionalMetadata, "string");
         }
 
         if (file !== undefined) {
-            formParams['file'] = file;
+            localVarFormParams['file'] = file;
         }
-        useFormData = true;
+        localVarUseFormData = true;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'POST',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.petstore_auth.applyToRequest(requestOptions);
+        this.authentications.petstore_auth.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: ApiResponse;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "ApiResponse");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1040,7 +1096,7 @@ export class StoreApi {
     }
 
     public setApiKey(key: StoreApiApiKeys, value: string) {
-        this.authentications[StoreApiApiKeys[key]].apiKey = value;
+        (this.authentications as any)[StoreApiApiKeys[key]].apiKey = value;
     }
 
     set accessToken(token: string) {
@@ -1050,47 +1106,48 @@ export class StoreApi {
      * For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
      * @summary Delete purchase order by ID
      * @param orderId ID of the order that needs to be deleted
+     * @param {*} [options] Override http request options.
      */
-    public deleteOrder (orderId: string) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public deleteOrder (orderId: string, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/store/order/{orderId}'
-            .replace('{' + 'orderId' + '}', String(orderId));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'orderId' + '}', encodeURIComponent(String(orderId)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'orderId' is not null or undefined
         if (orderId === null || orderId === undefined) {
             throw new Error('Required parameter orderId was null or undefined when calling deleteOrder.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'DELETE',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1102,44 +1159,45 @@ export class StoreApi {
     /**
      * Returns a map of status codes to quantities
      * @summary Returns pet inventories by status
+     * @param {*} [options] Override http request options.
      */
-    public getInventory () : Promise<{ response: http.ClientResponse; body: { [key: string]: number; };  }> {
+    public getInventory (options: any = {}) : Promise<{ response: http.ClientResponse; body: { [key: string]: number; };  }> {
         const localVarPath = this.basePath + '/store/inventory';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
+        let localVarUseFormData = false;
 
-        let useFormData = false;
-
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'GET',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.api_key.applyToRequest(requestOptions);
+        this.authentications.api_key.applyToRequest(localVarRequestOptions);
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: { [key: string]: number; };  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "{ [key: string]: number; }");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1152,48 +1210,49 @@ export class StoreApi {
      * For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
      * @summary Find purchase order by ID
      * @param orderId ID of pet that needs to be fetched
+     * @param {*} [options] Override http request options.
      */
-    public getOrderById (orderId: number) : Promise<{ response: http.ClientResponse; body: Order;  }> {
+    public getOrderById (orderId: number, options: any = {}) : Promise<{ response: http.ClientResponse; body: Order;  }> {
         const localVarPath = this.basePath + '/store/order/{orderId}'
-            .replace('{' + 'orderId' + '}', String(orderId));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'orderId' + '}', encodeURIComponent(String(orderId)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'orderId' is not null or undefined
         if (orderId === null || orderId === undefined) {
             throw new Error('Required parameter orderId was null or undefined when calling getOrderById.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'GET',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: Order;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "Order");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1206,48 +1265,49 @@ export class StoreApi {
      * 
      * @summary Place an order for a pet
      * @param body order placed for purchasing the pet
+     * @param {*} [options] Override http request options.
      */
-    public placeOrder (body: Order) : Promise<{ response: http.ClientResponse; body: Order;  }> {
+    public placeOrder (body: Order, options: any = {}) : Promise<{ response: http.ClientResponse; body: Order;  }> {
         const localVarPath = this.basePath + '/store/order';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling placeOrder.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'POST',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(body, "Order")
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: Order;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "Order");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1302,7 +1362,7 @@ export class UserApi {
     }
 
     public setApiKey(key: UserApiApiKeys, value: string) {
-        this.authentications[UserApiApiKeys[key]].apiKey = value;
+        (this.authentications as any)[UserApiApiKeys[key]].apiKey = value;
     }
 
     set accessToken(token: string) {
@@ -1312,47 +1372,48 @@ export class UserApi {
      * This can only be done by the logged in user.
      * @summary Create user
      * @param body Created user object
+     * @param {*} [options] Override http request options.
      */
-    public createUser (body: User) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public createUser (body: User, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/user';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createUser.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'POST',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(body, "User")
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1365,47 +1426,48 @@ export class UserApi {
      * 
      * @summary Creates list of users with given input array
      * @param body List of user object
+     * @param {*} [options] Override http request options.
      */
-    public createUsersWithArrayInput (body: Array<User>) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public createUsersWithArrayInput (body: Array<User>, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/user/createWithArray';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createUsersWithArrayInput.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'POST',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(body, "Array<User>")
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1418,47 +1480,48 @@ export class UserApi {
      * 
      * @summary Creates list of users with given input array
      * @param body List of user object
+     * @param {*} [options] Override http request options.
      */
-    public createUsersWithListInput (body: Array<User>) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public createUsersWithListInput (body: Array<User>, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/user/createWithList';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createUsersWithListInput.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'POST',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(body, "Array<User>")
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1471,47 +1534,48 @@ export class UserApi {
      * This can only be done by the logged in user.
      * @summary Delete user
      * @param username The name that needs to be deleted
+     * @param {*} [options] Override http request options.
      */
-    public deleteUser (username: string) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public deleteUser (username: string, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/user/{username}'
-            .replace('{' + 'username' + '}', String(username));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'username' + '}', encodeURIComponent(String(username)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'username' is not null or undefined
         if (username === null || username === undefined) {
             throw new Error('Required parameter username was null or undefined when calling deleteUser.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'DELETE',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1523,49 +1587,50 @@ export class UserApi {
     /**
      * 
      * @summary Get user by user name
-     * @param username The name that needs to be fetched. Use user1 for testing. 
+     * @param username The name that needs to be fetched. Use user1 for testing.
+     * @param {*} [options] Override http request options.
      */
-    public getUserByName (username: string) : Promise<{ response: http.ClientResponse; body: User;  }> {
+    public getUserByName (username: string, options: any = {}) : Promise<{ response: http.ClientResponse; body: User;  }> {
         const localVarPath = this.basePath + '/user/{username}'
-            .replace('{' + 'username' + '}', String(username));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'username' + '}', encodeURIComponent(String(username)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'username' is not null or undefined
         if (username === null || username === undefined) {
             throw new Error('Required parameter username was null or undefined when calling getUserByName.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'GET',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: User;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "User");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1579,13 +1644,13 @@ export class UserApi {
      * @summary Logs user into the system
      * @param username The user name for login
      * @param password The password for login in clear text
+     * @param {*} [options] Override http request options.
      */
-    public loginUser (username: string, password: string) : Promise<{ response: http.ClientResponse; body: string;  }> {
+    public loginUser (username: string, password: string, options: any = {}) : Promise<{ response: http.ClientResponse; body: string;  }> {
         const localVarPath = this.basePath + '/user/login';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'username' is not null or undefined
         if (username === null || username === undefined) {
@@ -1598,41 +1663,42 @@ export class UserApi {
         }
 
         if (username !== undefined) {
-            queryParameters['username'] = ObjectSerializer.serialize(username, "string");
+            localVarQueryParameters['username'] = ObjectSerializer.serialize(username, "string");
         }
 
         if (password !== undefined) {
-            queryParameters['password'] = ObjectSerializer.serialize(password, "string");
+            localVarQueryParameters['password'] = ObjectSerializer.serialize(password, "string");
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'GET',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body: string;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
                     body = ObjectSerializer.deserialize(body, "string");
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1644,41 +1710,42 @@ export class UserApi {
     /**
      * 
      * @summary Logs out current logged in user session
+     * @param {*} [options] Override http request options.
      */
-    public logoutUser () : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public logoutUser (options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/user/logout';
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
+        let localVarUseFormData = false;
 
-        let useFormData = false;
-
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'GET',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });
@@ -1692,14 +1759,14 @@ export class UserApi {
      * @summary Updated user
      * @param username name that need to be deleted
      * @param body Updated user object
+     * @param {*} [options] Override http request options.
      */
-    public updateUser (username: string, body: User) : Promise<{ response: http.ClientResponse; body?: any;  }> {
+    public updateUser (username: string, body: User, options: any = {}) : Promise<{ response: http.ClientResponse; body?: any;  }> {
         const localVarPath = this.basePath + '/user/{username}'
-            .replace('{' + 'username' + '}', String(username));
-        let queryParameters: any = {};
-        let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
-        let formParams: any = {};
-
+            .replace('{' + 'username' + '}', encodeURIComponent(String(username)));
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this.defaultHeaders);
+        let localVarFormParams: any = {};
 
         // verify required parameter 'username' is not null or undefined
         if (username === null || username === undefined) {
@@ -1711,34 +1778,35 @@ export class UserApi {
             throw new Error('Required parameter body was null or undefined when calling updateUser.');
         }
 
+        (<any>Object).assign(localVarHeaderParams, options.headers);
 
-        let useFormData = false;
+        let localVarUseFormData = false;
 
-        let requestOptions: request.Options = {
+        let localVarRequestOptions: localVarRequest.Options = {
             method: 'PUT',
-            qs: queryParameters,
-            headers: headerParams,
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
             uri: localVarPath,
             useQuerystring: this._useQuerystring,
             json: true,
             body: ObjectSerializer.serialize(body, "User")
         };
 
-        this.authentications.default.applyToRequest(requestOptions);
+        this.authentications.default.applyToRequest(localVarRequestOptions);
 
-        if (Object.keys(formParams).length) {
-            if (useFormData) {
-                (<any>requestOptions).formData = formParams;
+        if (Object.keys(localVarFormParams).length) {
+            if (localVarUseFormData) {
+                (<any>localVarRequestOptions).formData = localVarFormParams;
             } else {
-                requestOptions.form = formParams;
+                localVarRequestOptions.form = localVarFormParams;
             }
         }
         return new Promise<{ response: http.ClientResponse; body?: any;  }>((resolve, reject) => {
-            request(requestOptions, (error, response, body) => {
+            localVarRequest(localVarRequestOptions, (error, response, body) => {
                 if (error) {
                     reject(error);
                 } else {
-                    if (response.statusCode >= 200 && response.statusCode <= 299) {
+                    if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                         resolve({ response: response, body: body });
                     } else {
                         reject({ response: response, body: body });

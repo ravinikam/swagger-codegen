@@ -8,19 +8,25 @@
 import Foundation
 
 
-open class ArrayTest: Codable {
+
+public struct ArrayTest: Codable {
 
     public var arrayOfString: [String]?
     public var arrayArrayOfInteger: [[Int64]]?
     public var arrayArrayOfModel: [[ReadOnlyFirst]]?
 
-    public init() {}
+    public init(arrayOfString: [String]?, arrayArrayOfInteger: [[Int64]]?, arrayArrayOfModel: [[ReadOnlyFirst]]?) {
+        self.arrayOfString = arrayOfString
+        self.arrayArrayOfInteger = arrayArrayOfInteger
+        self.arrayArrayOfModel = arrayArrayOfModel
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case arrayOfString = "array_of_string"
         case arrayArrayOfInteger = "array_array_of_integer"
         case arrayArrayOfModel = "array_array_of_model"
     }
 
+
 }
+

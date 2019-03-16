@@ -4,7 +4,7 @@
     <artifactId>TSAngular2PestoreTest</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>TS Angular2 Pettore Test</name>
+    <name>TS Angular2 Petstore Test</name>
     <build>
         <plugins>
             <plugin>
@@ -36,6 +36,20 @@
                             <executable>npm</executable>
                             <arguments>
                                 <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-run-build</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>build</argument>
                             </arguments>
                         </configuration>
                     </execution>

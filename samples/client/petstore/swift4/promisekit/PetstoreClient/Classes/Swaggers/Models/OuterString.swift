@@ -8,4 +8,11 @@
 import Foundation
 
 
-public typealias OuterString = String
+
+public struct OuterString: Codable {
+
+
+
+
+}
+

@@ -8,15 +8,19 @@
 import Foundation
 
 
-open class SpecialModelName: Codable {
+
+public struct SpecialModelName: Codable {
 
     public var specialPropertyName: Int64?
 
-    public init() {}
+    public init(specialPropertyName: Int64?) {
+        self.specialPropertyName = specialPropertyName
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case specialPropertyName = "$special[property.name]"
     }
 
+
 }
+

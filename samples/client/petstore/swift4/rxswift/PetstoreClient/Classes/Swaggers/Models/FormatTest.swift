@@ -8,39 +8,39 @@
 import Foundation
 
 
-open class FormatTest: Codable {
+
+public struct FormatTest: Codable {
 
     public var integer: Int?
     public var int32: Int?
     public var int64: Int64?
-    public var number: Double?
+    public var number: Double
     public var float: Float?
     public var double: Double?
     public var string: String?
-    public var byte: Data?
+    public var byte: Data
     public var binary: Data?
-    public var date: Date?
+    public var date: Date
     public var dateTime: Date?
     public var uuid: UUID?
-    public var password: String?
+    public var password: String
 
-    public init() {}
-
-
-    private enum CodingKeys: String, CodingKey { 
-        case integer = "integer"
-        case int32 = "int32"
-        case int64 = "int64"
-        case number = "number"
-        case float = "float"
-        case double = "double"
-        case string = "string"
-        case byte = "byte"
-        case binary = "binary"
-        case date = "date"
-        case dateTime = "dateTime"
-        case uuid = "uuid"
-        case password = "password"
+    public init(integer: Int?, int32: Int?, int64: Int64?, number: Double, float: Float?, double: Double?, string: String?, byte: Data, binary: Data?, date: Date, dateTime: Date?, uuid: UUID?, password: String) {
+        self.integer = integer
+        self.int32 = int32
+        self.int64 = int64
+        self.number = number
+        self.float = float
+        self.double = double
+        self.string = string
+        self.byte = byte
+        self.binary = binary
+        self.date = date
+        self.dateTime = dateTime
+        self.uuid = uuid
+        self.password = password
     }
 
+
 }
+

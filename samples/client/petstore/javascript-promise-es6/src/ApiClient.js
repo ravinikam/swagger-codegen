@@ -83,6 +83,12 @@ export default class ApiClient {
         if (typeof window === 'undefined') {
           this.agent = new superagent.agent();
         }
+
+        /*
+         * Allow user to override superagent agent
+         */
+         this.requestAgent = null;
+
     }
 
     /**
@@ -391,6 +397,11 @@ export default class ApiClient {
         // set header parameters
         request.set(this.defaultHeaders).set(this.normalizeParams(headerParams));
 
+        // set requestAgent if it is set by user
+        if (this.requestAgent) {
+          request.agent(this.requestAgent);
+        }
+
         // set request timeout
         request.timeout(this.timeout);
 
@@ -471,7 +482,7 @@ export default class ApiClient {
     * @returns {Date} The parsed date object.
     */
     static parseDate(str) {
-        return new Date(str.replace(/T/i, ' '));
+        return new Date(str);
     }
 
     /**

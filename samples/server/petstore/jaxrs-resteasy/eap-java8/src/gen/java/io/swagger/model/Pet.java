@@ -6,8 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.Category;
 import io.swagger.model.Tag;
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.*;
 import io.swagger.annotations.*;
@@ -19,8 +21,8 @@ public class Pet   {
   private Long id = null;
   private Category category = null;
   private String name = null;
-  private List<String> photoUrls = new ArrayList<String>();
-  private List<Tag> tags = new ArrayList<Tag>();
+  private List<String> photoUrls = new ArrayList<>();
+  private List<Tag> tags = new ArrayList<>();
 
   /**
    * pet status in the store

@@ -9,12 +9,13 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-
 import { Headers }                                           from '@angular/http';
 
 import { Observable }                                        from 'rxjs/Observable';
 
-import * as models                                           from '../model/models';
+import { Order } from '../model/order';
+
+
 import { Configuration }                                     from '../configuration';
 
 

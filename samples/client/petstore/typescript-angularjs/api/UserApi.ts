@@ -40,11 +40,12 @@ export class UserApi {
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createUser.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'POST',
             url: localVarPath,
             data: body,
-                        params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -68,11 +69,12 @@ export class UserApi {
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createUsersWithArrayInput.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'POST',
             url: localVarPath,
             data: body,
-                        params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -96,11 +98,12 @@ export class UserApi {
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling createUsersWithListInput.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'POST',
             url: localVarPath,
             data: body,
-                        params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -117,7 +120,7 @@ export class UserApi {
      */
     public deleteUser (username: string, extraHttpRequestParams?: any ) : ng.IHttpPromise<{}> {
         const localVarPath = this.basePath + '/user/{username}'
-            .replace('{' + 'username' + '}', String(username));
+            .replace('{' + 'username' + '}', encodeURIComponent(String(username)));
 
         let queryParameters: any = {};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -125,10 +128,11 @@ export class UserApi {
         if (username === null || username === undefined) {
             throw new Error('Required parameter username was null or undefined when calling deleteUser.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'DELETE',
             url: localVarPath,
-                                    params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -141,11 +145,11 @@ export class UserApi {
     /**
      * 
      * @summary Get user by user name
-     * @param username The name that needs to be fetched. Use user1 for testing. 
+     * @param username The name that needs to be fetched. Use user1 for testing.
      */
     public getUserByName (username: string, extraHttpRequestParams?: any ) : ng.IHttpPromise<models.User> {
         const localVarPath = this.basePath + '/user/{username}'
-            .replace('{' + 'username' + '}', String(username));
+            .replace('{' + 'username' + '}', encodeURIComponent(String(username)));
 
         let queryParameters: any = {};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -153,10 +157,11 @@ export class UserApi {
         if (username === null || username === undefined) {
             throw new Error('Required parameter username was null or undefined when calling getUserByName.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'GET',
             url: localVarPath,
-                                    params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -181,10 +186,12 @@ export class UserApi {
         if (username === null || username === undefined) {
             throw new Error('Required parameter username was null or undefined when calling loginUser.');
         }
+
         // verify required parameter 'password' is not null or undefined
         if (password === null || password === undefined) {
             throw new Error('Required parameter password was null or undefined when calling loginUser.');
         }
+
         if (username !== undefined) {
             queryParameters['username'] = username;
         }
@@ -196,7 +203,7 @@ export class UserApi {
         let httpRequestParams: ng.IRequestConfig = {
             method: 'GET',
             url: localVarPath,
-                                    params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -218,7 +225,7 @@ export class UserApi {
         let httpRequestParams: ng.IRequestConfig = {
             method: 'GET',
             url: localVarPath,
-                                    params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -236,7 +243,7 @@ export class UserApi {
      */
     public updateUser (username: string, body: models.User, extraHttpRequestParams?: any ) : ng.IHttpPromise<{}> {
         const localVarPath = this.basePath + '/user/{username}'
-            .replace('{' + 'username' + '}', String(username));
+            .replace('{' + 'username' + '}', encodeURIComponent(String(username)));
 
         let queryParameters: any = {};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -244,15 +251,17 @@ export class UserApi {
         if (username === null || username === undefined) {
             throw new Error('Required parameter username was null or undefined when calling updateUser.');
         }
+
         // verify required parameter 'body' is not null or undefined
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling updateUser.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'PUT',
             url: localVarPath,
             data: body,
-                        params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 

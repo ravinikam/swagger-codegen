@@ -8,4 +8,11 @@
 import Foundation
 
 
-public typealias OuterBoolean = Bool
+
+public struct OuterBoolean: Codable {
+
+
+
+
+}
+

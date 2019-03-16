@@ -6,7 +6,7 @@ use Articus\DataTransfer\Annotation as DTA;
 
 /**
  */
-class EnumArrays 
+class EnumArrays
 {
     /**
      * @DTA\Data(field="just_symbol", nullable=true)
@@ -16,6 +16,7 @@ class EnumArrays
     public $just_symbol;
     /**
      * @DTA\Data(field="array_enum", nullable=true)
+     * TODO check validator and strategy are correct and can handle container item type
      * @DTA\Validator(name="Collection", options={"validators":{
      *     {"name":"Type", "options":{"type":"string"}}
      * }})
@@ -23,4 +24,3 @@ class EnumArrays
      */
     public $array_enum;
 }
-

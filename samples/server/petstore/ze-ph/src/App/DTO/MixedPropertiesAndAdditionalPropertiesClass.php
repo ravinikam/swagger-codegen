@@ -6,7 +6,7 @@ use Articus\DataTransfer\Annotation as DTA;
 
 /**
  */
-class MixedPropertiesAndAdditionalPropertiesClass 
+class MixedPropertiesAndAdditionalPropertiesClass
 {
     /**
      * @DTA\Data(field="uuid", nullable=true)
@@ -23,10 +23,12 @@ class MixedPropertiesAndAdditionalPropertiesClass
     public $date_time;
     /**
      * @DTA\Data(field="map", nullable=true)
-     * @DTA\Strategy(name="Object", options={"type":map[string,\App\DTO\Animal]::class})
-     * @DTA\Validator(name="Dictionary", options={"type":map[string,\App\DTO\Animal]::class})
+     * TODO check validator and strategy are correct and can handle container item type
+     * @DTA\Strategy(name="ObjectArray", options={"type":\App\DTO\Animal::class})
+     * @DTA\Validator(name="Collection", options={"validators":{
+     *     {"name":"Dictionary", "options":{"type":\App\DTO\Animal::class}}
+     * }})
      * @var map[string,\App\DTO\Animal]
      */
     public $map;
 }
-

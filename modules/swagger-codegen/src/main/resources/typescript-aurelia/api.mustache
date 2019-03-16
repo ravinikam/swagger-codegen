@@ -30,17 +30,23 @@ export class {{classname}} extends Api {
    * Creates a new {{classname}} class.
    *
    * @param httpClient The Aurelia HTTP client to be injected.
+   * @param authStorage A storage for authentication data.
    */
   constructor(httpClient: HttpClient, authStorage: AuthStorage) {
     super(httpClient, authStorage);
   }
 
 {{#operation}}
-  /**{{#summary}}
+  /**
+  {{#summary}}
    * {{summary}}
-   *{{/summary}}{{#notes}}
-   * {{notes}}{{/notes}}{{#allParams}}
-   * @param params.{{paramName}} {{description}}{{/allParams}}
+  {{/summary}}
+  {{#notes}}
+   * {{notes}}
+  {{/notes}}
+  {{#allParams}}
+   * @param params.{{paramName}} {{description}}
+  {{/allParams}}
    */
   async {{nickname}}({{#hasParams}}params: I{{operationIdCamelCase}}Params{{/hasParams}}): Promise<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}any{{/returnType}}> {
     // Verify required parameters are set
@@ -52,7 +58,7 @@ export class {{classname}} extends Api {
 
     // Create URL to call
     const url = `${this.basePath}{{{path}}}`{{#pathParams}}
-      .replace(`{${'{{baseName}}'}}`, `${params['{{paramName}}']}`){{/pathParams}};
+      .replace(`{${'{{baseName}}'}}`, encodeURIComponent(`${params['{{paramName}}']}`)){{/pathParams}};
 
     const response = await this.httpClient.createRequest(url)
       // Set HTTP method

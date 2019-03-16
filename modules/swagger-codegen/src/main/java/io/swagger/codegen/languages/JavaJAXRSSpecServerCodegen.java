@@ -15,18 +15,20 @@ import io.swagger.codegen.CodegenModel;
 import io.swagger.codegen.CodegenOperation;
 import io.swagger.codegen.CodegenProperty;
 import io.swagger.codegen.SupportingFile;
-import io.swagger.codegen.languages.features.BeanValidationFeatures;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
-import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
 
 public class JavaJAXRSSpecServerCodegen extends AbstractJavaJAXRSServerCodegen
 {
 
-    private static final String INTERFACE_ONLY = "interfaceOnly";
+    public static final String INTERFACE_ONLY = "interfaceOnly";
+    public static final String RETURN_RESPONSE = "returnResponse";
+    public static final String GENERATE_POM = "generatePom";
 
-    protected boolean interfaceOnly = false;
+    private boolean interfaceOnly = false;
+    private boolean returnResponse = false;
+    private boolean generatePom = true;
 
     public JavaJAXRSSpecServerCodegen()
     {
@@ -36,7 +38,6 @@ public class JavaJAXRSSpecServerCodegen extends AbstractJavaJAXRSServerCodegen
         outputFolder = "generated-code/JavaJaxRS-Spec";
 
         modelTemplateFiles.put("model.mustache", ".java");
-
         apiTemplateFiles.put("api.mustache", ".java");
         apiPackage = "io.swagger.api";
         modelPackage = "io.swagger.model";
@@ -74,25 +75,40 @@ public class JavaJAXRSSpecServerCodegen extends AbstractJavaJAXRSServerCodegen
         library.setEnum(supportedLibraries);
 
         cliOptions.add(library);
-        cliOptions.add(CliOption.newBoolean(INTERFACE_ONLY, "Whether to generate only API interface stubs without the server files."));
+        cliOptions.add(CliOption.newBoolean(GENERATE_POM, "Whether to generate pom.xml if the file does not already exist.").defaultValue(String.valueOf(generatePom)));
+        cliOptions.add(CliOption.newBoolean(INTERFACE_ONLY, "Whether to generate only API interface stubs without the server files.").defaultValue(String.valueOf(interfaceOnly)));
+        cliOptions.add(CliOption.newBoolean(RETURN_RESPONSE, "Whether generate API interface should return javax.ws.rs.core.Response instead of a deserialized entity. Only useful if interfaceOnly is true.").defaultValue(String.valueOf(returnResponse)));
     }
 
     @Override
     public void processOpts()
     {
-        super.processOpts();
-
-        supportingFiles.clear(); // Don't need extra files provided by AbstractJAX-RS & Java Codegen
-
+        if (additionalProperties.containsKey(GENERATE_POM)) {
+            generatePom = Boolean.valueOf(additionalProperties.get(GENERATE_POM).toString());
+        }
         if (additionalProperties.containsKey(INTERFACE_ONLY)) {
-            this.setInterfaceOnly(Boolean.valueOf(additionalProperties.get(INTERFACE_ONLY).toString()));
+            interfaceOnly = Boolean.valueOf(additionalProperties.get(INTERFACE_ONLY).toString());
             if (!interfaceOnly) {
                 additionalProperties.remove(INTERFACE_ONLY);
             }
         }
+        if (additionalProperties.containsKey(RETURN_RESPONSE)) {
+            returnResponse = Boolean.valueOf(additionalProperties.get(RETURN_RESPONSE).toString());
+            if (!returnResponse) {
+                additionalProperties.remove(RETURN_RESPONSE);
+            }
+        }
+        if (interfaceOnly) {
+            // Change default artifactId if genereating interfaces only, before command line options are applied in base class.
+            artifactId = "swagger-jaxrs-client";
+        }
 
-        writeOptional(outputFolder, new SupportingFile("pom.mustache", "", "pom.xml"));
+        super.processOpts();
 
+        supportingFiles.clear(); // Don't need extra files provided by AbstractJAX-RS & Java Codegen
+        if (generatePom) {
+            writeOptional(outputFolder, new SupportingFile("pom.mustache", "", "pom.xml"));
+        }
         if (!interfaceOnly) {
             writeOptional(outputFolder, new SupportingFile("RestApplication.mustache",
                     (sourceFolder + '/' + invokerPackage).replace(".", "/"), "RestApplication.java"));
@@ -105,8 +121,6 @@ public class JavaJAXRSSpecServerCodegen extends AbstractJavaJAXRSServerCodegen
     {
         return "jaxrs-spec";
     }
-
-    public void setInterfaceOnly(boolean interfaceOnly) { this.interfaceOnly = interfaceOnly; }
 
     @Override
     public void addOperationToGroup(String tag, String resourcePath, Operation operation, CodegenOperation co, Map<String, List<CodegenOperation>> operations) {

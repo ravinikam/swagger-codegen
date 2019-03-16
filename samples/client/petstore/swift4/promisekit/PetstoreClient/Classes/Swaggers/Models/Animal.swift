@@ -8,17 +8,17 @@
 import Foundation
 
 
-open class Animal: Codable {
 
-    public var className: String?
+public struct Animal: Codable {
+
+    public var className: String
     public var color: String?
 
-    public init() {}
-
-
-    private enum CodingKeys: String, CodingKey { 
-        case className = "className"
-        case color = "color"
+    public init(className: String, color: String?) {
+        self.className = className
+        self.color = color
     }
 
+
 }
+

@@ -8,15 +8,15 @@
 import Foundation
 
 
-open class Client: Codable {
+
+public struct Client: Codable {
 
     public var client: String?
 
-    public init() {}
-
-
-    private enum CodingKeys: String, CodingKey { 
-        case client = "client"
+    public init(client: String?) {
+        self.client = client
     }
 
+
 }
+

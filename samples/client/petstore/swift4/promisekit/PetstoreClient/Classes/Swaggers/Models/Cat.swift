@@ -8,15 +8,19 @@
 import Foundation
 
 
-open class Cat: Animal {
 
+public struct Cat: Codable {
+
+    public var className: String
+    public var color: String?
     public var declawed: Bool?
 
-    
-
-
-    private enum CodingKeys: String, CodingKey { 
-        case declawed = "declawed"
+    public init(className: String, color: String?, declawed: Bool?) {
+        self.className = className
+        self.color = color
+        self.declawed = declawed
     }
 
+
 }
+

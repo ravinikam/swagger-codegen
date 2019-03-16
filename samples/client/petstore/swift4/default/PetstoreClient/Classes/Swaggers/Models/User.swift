@@ -8,9 +8,10 @@
 import Foundation
 
 
-open class User: Codable {
 
-    public var id: Int64?
+public struct User: Codable {
+
+    public var _id: Int64?
     public var username: String?
     public var firstName: String?
     public var lastName: String?
@@ -20,18 +21,28 @@ open class User: Codable {
     /** User Status */
     public var userStatus: Int?
 
-    public init() {}
-
-
-    private enum CodingKeys: String, CodingKey { 
-        case id = "id"
-        case username = "username"
-        case firstName = "firstName"
-        case lastName = "lastName"
-        case email = "email"
-        case password = "password"
-        case phone = "phone"
-        case userStatus = "userStatus"
+    public init(_id: Int64?, username: String?, firstName: String?, lastName: String?, email: String?, password: String?, phone: String?, userStatus: Int?) {
+        self._id = _id
+        self.username = username
+        self.firstName = firstName
+        self.lastName = lastName
+        self.email = email
+        self.password = password
+        self.phone = phone
+        self.userStatus = userStatus
     }
 
+    public enum CodingKeys: String, CodingKey { 
+        case _id = "id"
+        case username
+        case firstName
+        case lastName
+        case email
+        case password
+        case phone
+        case userStatus
+    }
+
+
 }
+

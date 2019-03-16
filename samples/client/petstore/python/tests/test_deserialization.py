@@ -1,5 +1,7 @@
 # coding: utf-8
 
+# flake8: noqa
+
 """
 Run the tests.
 $ pip install nose (optional)
@@ -25,6 +27,7 @@ class DeserializationTests(unittest.TestCase):
         data = {
             'enum_test': {
                 "enum_string": "UPPER",
+                "enum_string_required": "lower",
                 "enum_integer": 1,
                 "enum_number": 1.1,
                 "outerEnum": "placed"
@@ -36,6 +39,7 @@ class DeserializationTests(unittest.TestCase):
         self.assertTrue(isinstance(deserialized['enum_test'], petstore_api.EnumTest))
         self.assertEqual(deserialized['enum_test'],
                          petstore_api.EnumTest(enum_string="UPPER",
+                                               enum_string_required="lower",
                                                enum_integer=1,
                                                enum_number=1.1,
                                                outer_enum=petstore_api.OuterEnum.PLACED))

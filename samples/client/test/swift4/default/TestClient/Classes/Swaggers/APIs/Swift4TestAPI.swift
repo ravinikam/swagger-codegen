@@ -19,7 +19,7 @@ open class Swift4TestAPI {
      */
     open class func getAllModels(clientId: String, completion: @escaping ((_ data: GetAllModelsResult?,_ error: Error?) -> Void)) {
         getAllModelsWithRequestBuilder(clientId: clientId).execute { (response, error) -> Void in
-            completion(response?.body, error);
+            completion(response?.body, error)
         }
     }
 
@@ -33,29 +33,31 @@ open class Swift4TestAPI {
     "myDateTimeArray" : [ "2000-01-23T04:56:07.000+00:00", "2000-01-23T04:56:07.000+00:00" ],
     "myStringArray" : [ "myStringArray", "myStringArray" ],
     "myFile" : "",
-    "myFloatArray" : [ 2.302136, 2.302136 ],
     "myBytes" : "myBytes",
     "myLong" : 1,
     "myBooleanArray" : [ true, true ],
-    "myDoubleArray" : [ 9.301444243932576, 9.301444243932576 ],
     "myInteger" : 0,
-    "myString" : "myString",
     "myBytesArray" : [ "myBytesArray", "myBytesArray" ],
     "myDouble" : 7.061401241503109,
+    "myIntegerArray" : [ 6, 6 ],
+    "myInlineStringEnum" : "inlineStringEnumValue1",
+    "myFileArray" : [ "", "" ],
+    "myFloat" : 5.637377,
+    "myStringEnumArray" : [ null, null ],
+    "myFloatArray" : [ 2.302136, 2.302136 ],
+    "myDoubleArray" : [ 9.301444243932576, 9.301444243932576 ],
+    "myString" : "myString",
     "myDate" : "2000-01-23",
     "myDateArray" : [ "2000-01-23", "2000-01-23" ],
     "myDateTime" : "2000-01-23T04:56:07.000+00:00",
     "myLongArray" : [ 5, 5 ],
-    "myIntegerArray" : [ 6, 6 ],
     "myUUID" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
     "myBoolean" : true,
-    "myFileArray" : [ "", "" ],
     "myStringEnum" : { },
-    "myFloat" : 5.637377,
-    "myStringEnumArray" : [ null, null ],
     "myUUIDArray" : [ "046b6c7f-0b8a-43b9-b35d-6489e6daee91", "046b6c7f-0b8a-43b9-b35d-6489e6daee91" ]
   },
   "myVariableNameTest" : {
+    "normalName" : "normalName",
     "for" : "for",
     "example_name" : "example_name"
   },
@@ -63,51 +65,53 @@ open class Swift4TestAPI {
     "myDateTimeArray" : [ "2000-01-23T04:56:07.000+00:00", "2000-01-23T04:56:07.000+00:00" ],
     "myStringArray" : [ "myStringArray", "myStringArray" ],
     "myFile" : "",
-    "myFloatArray" : [ 2.302136, 2.302136 ],
     "myBytes" : "myBytes",
     "myLong" : 1,
     "myBooleanArray" : [ true, true ],
-    "myDoubleArray" : [ 9.301444243932576, 9.301444243932576 ],
     "myInteger" : 0,
-    "myString" : "myString",
     "myBytesArray" : [ "myBytesArray", "myBytesArray" ],
     "myDouble" : 7.061401241503109,
+    "myIntegerArray" : [ 6, 6 ],
+    "myInlineStringEnum" : "inlineStringEnumValue1",
+    "myFileArray" : [ "", "" ],
+    "myFloat" : 5.637377,
+    "myStringEnumArray" : [ null, null ],
+    "myFloatArray" : [ 2.302136, 2.302136 ],
+    "myDoubleArray" : [ 9.301444243932576, 9.301444243932576 ],
+    "myString" : "myString",
     "myDate" : "2000-01-23",
     "myDateArray" : [ "2000-01-23", "2000-01-23" ],
     "myDateTime" : "2000-01-23T04:56:07.000+00:00",
     "myLongArray" : [ 5, 5 ],
-    "myIntegerArray" : [ 6, 6 ],
     "myUUID" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
     "myBoolean" : true,
-    "myFileArray" : [ "", "" ],
     "myStringEnum" : { },
-    "myFloat" : 5.637377,
-    "myStringEnumArray" : [ null, null ],
     "myUUIDArray" : [ "046b6c7f-0b8a-43b9-b35d-6489e6daee91", "046b6c7f-0b8a-43b9-b35d-6489e6daee91" ]
   }, {
     "myDateTimeArray" : [ "2000-01-23T04:56:07.000+00:00", "2000-01-23T04:56:07.000+00:00" ],
     "myStringArray" : [ "myStringArray", "myStringArray" ],
     "myFile" : "",
-    "myFloatArray" : [ 2.302136, 2.302136 ],
     "myBytes" : "myBytes",
     "myLong" : 1,
     "myBooleanArray" : [ true, true ],
-    "myDoubleArray" : [ 9.301444243932576, 9.301444243932576 ],
     "myInteger" : 0,
-    "myString" : "myString",
     "myBytesArray" : [ "myBytesArray", "myBytesArray" ],
     "myDouble" : 7.061401241503109,
+    "myIntegerArray" : [ 6, 6 ],
+    "myInlineStringEnum" : "inlineStringEnumValue1",
+    "myFileArray" : [ "", "" ],
+    "myFloat" : 5.637377,
+    "myStringEnumArray" : [ null, null ],
+    "myFloatArray" : [ 2.302136, 2.302136 ],
+    "myDoubleArray" : [ 9.301444243932576, 9.301444243932576 ],
+    "myString" : "myString",
     "myDate" : "2000-01-23",
     "myDateArray" : [ "2000-01-23", "2000-01-23" ],
     "myDateTime" : "2000-01-23T04:56:07.000+00:00",
     "myLongArray" : [ 5, 5 ],
-    "myIntegerArray" : [ 6, 6 ],
     "myUUID" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
     "myBoolean" : true,
-    "myFileArray" : [ "", "" ],
     "myStringEnum" : { },
-    "myFloat" : 5.637377,
-    "myStringEnumArray" : [ null, null ],
     "myUUIDArray" : [ "046b6c7f-0b8a-43b9-b35d-6489e6daee91", "046b6c7f-0b8a-43b9-b35d-6489e6daee91" ]
   } ]
 }}]
@@ -120,12 +124,11 @@ open class Swift4TestAPI {
         let path = "/allModels"
         let URLString = TestClientAPI.basePath + path
         let parameters: [String:Any]? = nil
-
-        let url = NSURLComponents(string: URLString)
-        url?.queryItems = APIHelper.mapValuesToQueryItems(values:[
+        
+        var url = URLComponents(string: URLString)
+        url?.queryItems = APIHelper.mapValuesToQueryItems([
             "client_id": clientId
         ])
-        
 
         let requestBuilder: RequestBuilder<GetAllModelsResult>.Type = TestClientAPI.requestBuilderFactory.getBuilder()
 

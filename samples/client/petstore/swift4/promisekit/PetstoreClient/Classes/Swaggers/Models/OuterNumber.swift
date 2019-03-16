@@ -8,4 +8,11 @@
 import Foundation
 
 
-public typealias OuterNumber = Double
+
+public struct OuterNumber: Codable {
+
+
+
+
+}
+

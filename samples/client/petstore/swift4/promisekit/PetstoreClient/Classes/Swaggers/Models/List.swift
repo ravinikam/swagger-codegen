@@ -8,15 +8,19 @@
 import Foundation
 
 
-open class List: Codable {
+
+public struct List: Codable {
 
     public var _123List: String?
 
-    public init() {}
+    public init(_123List: String?) {
+        self._123List = _123List
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case _123List = "123-list"
     }
 
+
 }
+

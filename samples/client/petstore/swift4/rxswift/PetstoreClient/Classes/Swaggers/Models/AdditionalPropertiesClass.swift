@@ -8,17 +8,22 @@
 import Foundation
 
 
-open class AdditionalPropertiesClass: Codable {
+
+public struct AdditionalPropertiesClass: Codable {
 
     public var mapProperty: [String:String]?
     public var mapOfMapProperty: [String:[String:String]]?
 
-    public init() {}
+    public init(mapProperty: [String:String]?, mapOfMapProperty: [String:[String:String]]?) {
+        self.mapProperty = mapProperty
+        self.mapOfMapProperty = mapOfMapProperty
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case mapProperty = "map_property"
         case mapOfMapProperty = "map_of_map_property"
     }
 
+
 }
+

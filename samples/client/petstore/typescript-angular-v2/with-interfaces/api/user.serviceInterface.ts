@@ -9,12 +9,13 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-
 import { Headers }                                           from '@angular/http';
 
 import { Observable }                                        from 'rxjs/Observable';
 
-import * as models                                           from '../model/models';
+import { User } from '../model/user';
+
+
 import { Configuration }                                     from '../configuration';
 
 
@@ -54,7 +55,7 @@ export interface UserServiceInterface {
     /**
     * Get user by user name
     * 
-    * @param username The name that needs to be fetched. Use user1 for testing. 
+    * @param username The name that needs to be fetched. Use user1 for testing.
     */
     getUserByName(username: string, extraHttpRequestParams?: any): Observable<User>;
 

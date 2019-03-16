@@ -33,7 +33,7 @@ export class StoreApi {
      */
     public deleteOrder (orderId: string, extraHttpRequestParams?: any ) : ng.IHttpPromise<{}> {
         const localVarPath = this.basePath + '/store/order/{orderId}'
-            .replace('{' + 'orderId' + '}', String(orderId));
+            .replace('{' + 'orderId' + '}', encodeURIComponent(String(orderId)));
 
         let queryParameters: any = {};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -41,10 +41,11 @@ export class StoreApi {
         if (orderId === null || orderId === undefined) {
             throw new Error('Required parameter orderId was null or undefined when calling deleteOrder.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'DELETE',
             url: localVarPath,
-                                    params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -66,7 +67,7 @@ export class StoreApi {
         let httpRequestParams: ng.IRequestConfig = {
             method: 'GET',
             url: localVarPath,
-                                    params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -83,7 +84,7 @@ export class StoreApi {
      */
     public getOrderById (orderId: number, extraHttpRequestParams?: any ) : ng.IHttpPromise<models.Order> {
         const localVarPath = this.basePath + '/store/order/{orderId}'
-            .replace('{' + 'orderId' + '}', String(orderId));
+            .replace('{' + 'orderId' + '}', encodeURIComponent(String(orderId)));
 
         let queryParameters: any = {};
         let headerParams: any = (<any>Object).assign({}, this.defaultHeaders);
@@ -91,10 +92,11 @@ export class StoreApi {
         if (orderId === null || orderId === undefined) {
             throw new Error('Required parameter orderId was null or undefined when calling getOrderById.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'GET',
             url: localVarPath,
-                                    params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 
@@ -118,11 +120,12 @@ export class StoreApi {
         if (body === null || body === undefined) {
             throw new Error('Required parameter body was null or undefined when calling placeOrder.');
         }
+
         let httpRequestParams: ng.IRequestConfig = {
             method: 'POST',
             url: localVarPath,
             data: body,
-                        params: queryParameters,
+            params: queryParameters,
             headers: headerParams
         };
 

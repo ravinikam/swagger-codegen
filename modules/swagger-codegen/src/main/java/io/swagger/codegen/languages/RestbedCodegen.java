@@ -99,8 +99,6 @@ public class RestbedCodegen extends AbstractCppCodegen {
       addOption(DEFAULT_INCLUDE,
               "The default include statement that should be placed in all headers for including things like the declspec (convention: #include \"Commons.h\" ",
               this.defaultInclude);
-
-      reservedWords = new HashSet<String>();
       
       supportingFiles.add(new SupportingFile("gitignore.mustache", "", ".gitignore"));
       supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
@@ -132,13 +130,6 @@ public class RestbedCodegen extends AbstractCppCodegen {
       importMapping.put("restbed::Bytes", "#include <corvusoft/restbed/byte.hpp>");
   }
 
-  protected void addOption(String key, String description, String defaultValue) {
-      CliOption option = new CliOption(key, description);
-      if (defaultValue != null)
-          option.defaultValue(defaultValue);
-      cliOptions.add(option);
-  }
-
   @Override
   public void processOpts() {
       super.processOpts();
@@ -162,7 +153,7 @@ public class RestbedCodegen extends AbstractCppCodegen {
   /**
    * Escapes a reserved word as defined in the `reservedWords` array. Handle
    * escaping those terms here. This logic is only called if a variable
-   * matches the reseved words
+   * matches the reserved words
    * 
    * @return the escaped term
    */

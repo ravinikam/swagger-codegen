@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import io.swagger.model.Client;
 import java.util.Date;
 import io.swagger.model.OuterComposite;
+import io.swagger.model.User;
 
 import java.util.List;
 import io.swagger.api.NotFoundException;
@@ -46,6 +47,13 @@ public class FakeApiServiceImpl extends FakeApiService {
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
     @Override
+    public Response testBodyWithQueryParams(User body
+, String query
+ ) throws NotFoundException {
+        // do some magic!
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    }
+    @Override
     public Response testClientModel(Client body
  ) throws NotFoundException {
         // do some magic!
@@ -79,6 +87,19 @@ public class FakeApiServiceImpl extends FakeApiService {
 , String enumQueryString
 , Integer enumQueryInteger
 , Double enumQueryDouble
+ ) throws NotFoundException {
+        // do some magic!
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    }
+    @Override
+    public Response testInlineAdditionalProperties(Object param
+ ) throws NotFoundException {
+        // do some magic!
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    }
+    @Override
+    public Response testJsonFormData(String param
+, String param2
  ) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();

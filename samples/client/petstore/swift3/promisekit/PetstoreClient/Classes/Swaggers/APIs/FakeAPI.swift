@@ -48,9 +48,9 @@ open class FakeAPI: APIBase {
     open class func fakeOuterBooleanSerializeWithRequestBuilder(body: OuterBoolean? = nil) -> RequestBuilder<OuterBoolean> {
         let path = "/fake/outer/boolean"
         let URLString = PetstoreClientAPI.basePath + path
-        let parameters = body?.encodeToJSON() as? [String:AnyObject]
+        let parameters = body?.encodeToJSON()
 
-        let url = NSURLComponents(string: URLString)
+        let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<OuterBoolean>.Type = PetstoreClientAPI.requestBuilderFactory.getBuilder()
 
@@ -98,9 +98,9 @@ open class FakeAPI: APIBase {
     open class func fakeOuterCompositeSerializeWithRequestBuilder(body: OuterComposite? = nil) -> RequestBuilder<OuterComposite> {
         let path = "/fake/outer/composite"
         let URLString = PetstoreClientAPI.basePath + path
-        let parameters = body?.encodeToJSON() as? [String:AnyObject]
+        let parameters = body?.encodeToJSON()
 
-        let url = NSURLComponents(string: URLString)
+        let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<OuterComposite>.Type = PetstoreClientAPI.requestBuilderFactory.getBuilder()
 
@@ -144,9 +144,9 @@ open class FakeAPI: APIBase {
     open class func fakeOuterNumberSerializeWithRequestBuilder(body: OuterNumber? = nil) -> RequestBuilder<OuterNumber> {
         let path = "/fake/outer/number"
         let URLString = PetstoreClientAPI.basePath + path
-        let parameters = body?.encodeToJSON() as? [String:AnyObject]
+        let parameters = body?.encodeToJSON()
 
-        let url = NSURLComponents(string: URLString)
+        let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<OuterNumber>.Type = PetstoreClientAPI.requestBuilderFactory.getBuilder()
 
@@ -190,9 +190,9 @@ open class FakeAPI: APIBase {
     open class func fakeOuterStringSerializeWithRequestBuilder(body: OuterString? = nil) -> RequestBuilder<OuterString> {
         let path = "/fake/outer/string"
         let URLString = PetstoreClientAPI.basePath + path
-        let parameters = body?.encodeToJSON() as? [String:AnyObject]
+        let parameters = body?.encodeToJSON()
 
-        let url = NSURLComponents(string: URLString)
+        let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<OuterString>.Type = PetstoreClientAPI.requestBuilderFactory.getBuilder()
 
@@ -241,9 +241,9 @@ open class FakeAPI: APIBase {
     open class func testClientModelWithRequestBuilder(body: Client) -> RequestBuilder<Client> {
         let path = "/fake"
         let URLString = PetstoreClientAPI.basePath + path
-        let parameters = body.encodeToJSON() as? [String:AnyObject]
+        let parameters = body.encodeToJSON()
 
-        let url = NSURLComponents(string: URLString)
+        let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<Client>.Type = PetstoreClientAPI.requestBuilderFactory.getBuilder()
 
@@ -349,8 +349,8 @@ open class FakeAPI: APIBase {
 
         let nonNullParameters = APIHelper.rejectNil(formParams)
         let parameters = APIHelper.convertBoolToString(nonNullParameters)
-
-        let url = NSURLComponents(string: URLString)
+        
+        let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<Void>.Type = PetstoreClientAPI.requestBuilderFactory.getBuilder()
 
@@ -413,7 +413,7 @@ open class FakeAPI: APIBase {
      */
     public enum EnumQueryInteger_testEnumParameters: Int32 { 
         case _1 = 1
-        case numberminus2 = -2
+        case number2 = -2
     }
 
     /**
@@ -421,7 +421,7 @@ open class FakeAPI: APIBase {
      */
     public enum EnumQueryDouble_testEnumParameters: Double { 
         case _11 = 1.1
-        case numberminus12 = -1.2
+        case number12 = -1.2
     }
 
     /**
@@ -492,11 +492,11 @@ open class FakeAPI: APIBase {
 
         let nonNullParameters = APIHelper.rejectNil(formParams)
         let parameters = APIHelper.convertBoolToString(nonNullParameters)
-
-        let url = NSURLComponents(string: URLString)
+        
+        var url = URLComponents(string: URLString)
         url?.queryItems = APIHelper.mapValuesToQueryItems(values:[
-            "enum_query_string_array": enumQueryStringArray, 
-            "enum_query_string": enumQueryString?.rawValue, 
+            "enum_query_string_array": enumQueryStringArray,
+            "enum_query_string": enumQueryString?.rawValue,
             "enum_query_integer": enumQueryInteger?.rawValue
         ])
         let nillableHeaders: [String: Any?] = [
@@ -559,8 +559,8 @@ open class FakeAPI: APIBase {
 
         let nonNullParameters = APIHelper.rejectNil(formParams)
         let parameters = APIHelper.convertBoolToString(nonNullParameters)
-
-        let url = NSURLComponents(string: URLString)
+        
+        let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<Void>.Type = PetstoreClientAPI.requestBuilderFactory.getBuilder()
 

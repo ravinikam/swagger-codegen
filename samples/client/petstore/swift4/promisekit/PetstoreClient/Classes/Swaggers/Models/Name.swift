@@ -9,21 +9,28 @@ import Foundation
 
 
 /** Model for testing model name same as property name */
-open class Name: Codable {
 
-    public var name: Int?
+public struct Name: Codable {
+
+    public var name: Int
     public var snakeCase: Int?
     public var property: String?
     public var _123Number: Int?
 
-    public init() {}
+    public init(name: Int, snakeCase: Int?, property: String?, _123Number: Int?) {
+        self.name = name
+        self.snakeCase = snakeCase
+        self.property = property
+        self._123Number = _123Number
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
-        case name = "name"
+    public enum CodingKeys: String, CodingKey { 
+        case name
         case snakeCase = "snake_case"
-        case property = "property"
+        case property
         case _123Number = "123Number"
     }
 
+
 }
+

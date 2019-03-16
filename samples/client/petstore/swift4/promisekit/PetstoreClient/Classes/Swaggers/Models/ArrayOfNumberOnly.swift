@@ -8,15 +8,19 @@
 import Foundation
 
 
-open class ArrayOfNumberOnly: Codable {
+
+public struct ArrayOfNumberOnly: Codable {
 
     public var arrayNumber: [Double]?
 
-    public init() {}
+    public init(arrayNumber: [Double]?) {
+        self.arrayNumber = arrayNumber
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case arrayNumber = "ArrayNumber"
     }
 
+
 }
+

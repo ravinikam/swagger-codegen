@@ -8,17 +8,22 @@
 import Foundation
 
 
-open class Category: Codable {
 
-    public var id: Int64?
+public struct Category: Codable {
+
+    public var _id: Int64?
     public var name: String?
 
-    public init() {}
-
-
-    private enum CodingKeys: String, CodingKey { 
-        case id = "id"
-        case name = "name"
+    public init(_id: Int64?, name: String?) {
+        self._id = _id
+        self.name = name
     }
 
+    public enum CodingKeys: String, CodingKey { 
+        case _id = "id"
+        case name
+    }
+
+
 }
+

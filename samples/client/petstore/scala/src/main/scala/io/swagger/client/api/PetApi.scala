@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType
 
 import java.io.File
 import java.util.Date
+import java.util.TimeZone
 
 import scala.collection.mutable.HashMap
 
@@ -43,31 +44,47 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 
-class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
-                        defApiInvoker: ApiInvoker = ApiInvoker) {
+import org.json4s._
 
-  implicit val formats = new org.json4s.DefaultFormats {
-    override def dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS+0000")
+class PetApi(
+  val defBasePath: String = "http://petstore.swagger.io/v2",
+  defApiInvoker: ApiInvoker = ApiInvoker
+) {
+  private lazy val dateTimeFormatter = {
+    val formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    formatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+    formatter
   }
-  implicit val stringReader = ClientResponseReaders.StringReader
-  implicit val unitReader = ClientResponseReaders.UnitReader
-  implicit val jvalueReader = ClientResponseReaders.JValueReader
-  implicit val jsonReader = JsonFormatsReader
-  implicit val stringWriter = RequestWriters.StringWriter
-  implicit val jsonWriter = JsonFormatsWriter
+  private val dateFormatter = {
+    val formatter = new SimpleDateFormat("yyyy-MM-dd")
+    formatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+    formatter
+  }
+  implicit val formats = new org.json4s.DefaultFormats {
+    override def dateFormatter = dateTimeFormatter
+  }
+  implicit val stringReader: ClientResponseReader[String] = ClientResponseReaders.StringReader
+  implicit val unitReader: ClientResponseReader[Unit] = ClientResponseReaders.UnitReader
+  implicit val jvalueReader: ClientResponseReader[JValue] = ClientResponseReaders.JValueReader
+  implicit val jsonReader: ClientResponseReader[Nothing] = JsonFormatsReader
+  implicit val stringWriter: RequestWriter[String] = RequestWriters.StringWriter
+  implicit val jsonWriter: RequestWriter[Nothing] = JsonFormatsWriter
 
-  var basePath = defBasePath
-  var apiInvoker = defApiInvoker
+  var basePath: String = defBasePath
+  var apiInvoker: ApiInvoker = defApiInvoker
 
-  def addHeader(key: String, value: String) = apiInvoker.defaultHeaders += key -> value
+  def addHeader(key: String, value: String): mutable.HashMap[String, String] = {
+    apiInvoker.defaultHeaders += key -> value
+  }
 
-  val config = SwaggerConfig.forUrl(new URI(defBasePath))
+  val config: SwaggerConfig = SwaggerConfig.forUrl(new URI(defBasePath))
   val client = new RestClient(config)
   val helper = new PetApiAsyncHelper(client, config)
 
   /**
    * Add a new pet to the store
    * 
+   *
    * @param body Pet object that needs to be added to the store 
    * @return void
    */
@@ -82,17 +99,18 @@ class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
   /**
    * Add a new pet to the store asynchronously
    * 
+   *
    * @param body Pet object that needs to be added to the store 
    * @return Future(void)
-  */
+   */
   def addPetAsync(body: Pet) = {
       helper.addPet(body)
   }
 
-
   /**
    * Deletes a pet
    * 
+   *
    * @param petId Pet id to delete 
    * @param apiKey  (optional)
    * @return void
@@ -108,18 +126,19 @@ class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
   /**
    * Deletes a pet asynchronously
    * 
+   *
    * @param petId Pet id to delete 
    * @param apiKey  (optional)
    * @return Future(void)
-  */
+   */
   def deletePetAsync(petId: Long, apiKey: Option[String] = None) = {
       helper.deletePet(petId, apiKey)
   }
 
-
   /**
    * Finds Pets by status
    * Multiple status values can be provided with comma separated strings
+   *
    * @param status Status values that need to be considered for filter 
    * @return List[Pet]
    */
@@ -134,17 +153,18 @@ class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
   /**
    * Finds Pets by status asynchronously
    * Multiple status values can be provided with comma separated strings
+   *
    * @param status Status values that need to be considered for filter 
    * @return Future(List[Pet])
-  */
+   */
   def findPetsByStatusAsync(status: List[String]): Future[List[Pet]] = {
       helper.findPetsByStatus(status)
   }
 
-
   /**
    * Finds Pets by tags
    * Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+   *
    * @param tags Tags to filter by 
    * @return List[Pet]
    */
@@ -159,17 +179,18 @@ class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
   /**
    * Finds Pets by tags asynchronously
    * Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+   *
    * @param tags Tags to filter by 
    * @return Future(List[Pet])
-  */
+   */
   def findPetsByTagsAsync(tags: List[String]): Future[List[Pet]] = {
       helper.findPetsByTags(tags)
   }
 
-
   /**
    * Find pet by ID
    * Returns a single pet
+   *
    * @param petId ID of pet to return 
    * @return Pet
    */
@@ -184,17 +205,18 @@ class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
   /**
    * Find pet by ID asynchronously
    * Returns a single pet
+   *
    * @param petId ID of pet to return 
    * @return Future(Pet)
-  */
+   */
   def getPetByIdAsync(petId: Long): Future[Pet] = {
       helper.getPetById(petId)
   }
 
-
   /**
    * Update an existing pet
    * 
+   *
    * @param body Pet object that needs to be added to the store 
    * @return void
    */
@@ -209,17 +231,18 @@ class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
   /**
    * Update an existing pet asynchronously
    * 
+   *
    * @param body Pet object that needs to be added to the store 
    * @return Future(void)
-  */
+   */
   def updatePetAsync(body: Pet) = {
       helper.updatePet(body)
   }
 
-
   /**
    * Updates a pet in the store with form data
    * 
+   *
    * @param petId ID of pet that needs to be updated 
    * @param name Updated name of the pet (optional)
    * @param status Updated status of the pet (optional)
@@ -236,19 +259,20 @@ class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
   /**
    * Updates a pet in the store with form data asynchronously
    * 
+   *
    * @param petId ID of pet that needs to be updated 
    * @param name Updated name of the pet (optional)
    * @param status Updated status of the pet (optional)
    * @return Future(void)
-  */
+   */
   def updatePetWithFormAsync(petId: Long, name: Option[String] = None, status: Option[String] = None) = {
       helper.updatePetWithForm(petId, name, status)
   }
 
-
   /**
    * uploads an image
    * 
+   *
    * @param petId ID of pet to update 
    * @param additionalMetadata Additional data to pass to server (optional)
    * @param file file to upload (optional)
@@ -265,15 +289,15 @@ class PetApi(val defBasePath: String = "http://petstore.swagger.io/v2",
   /**
    * uploads an image asynchronously
    * 
+   *
    * @param petId ID of pet to update 
    * @param additionalMetadata Additional data to pass to server (optional)
    * @param file file to upload (optional)
    * @return Future(ApiResponse)
-  */
+   */
   def uploadFileAsync(petId: Long, additionalMetadata: Option[String] = None, file: Option[File] = None): Future[ApiResponse] = {
       helper.uploadFile(petId, additionalMetadata, file)
   }
-
 
 }
 
@@ -300,7 +324,7 @@ class PetApiAsyncHelper(client: TransportClient, config: SwaggerConfig) extends 
     )(implicit reader: ClientResponseReader[Unit]): Future[Unit] = {
     // create path and map variables
     val path = (addFmt("/pet/{petId}")
-      replaceAll ("\\{" + "petId" + "\\}",petId.toString))
+      replaceAll("\\{" + "petId" + "\\}", petId.toString))
 
     // query params
     val queryParams = new mutable.HashMap[String, String]
@@ -354,7 +378,7 @@ class PetApiAsyncHelper(client: TransportClient, config: SwaggerConfig) extends 
   def getPetById(petId: Long)(implicit reader: ClientResponseReader[Pet]): Future[Pet] = {
     // create path and map variables
     val path = (addFmt("/pet/{petId}")
-      replaceAll ("\\{" + "petId" + "\\}",petId.toString))
+      replaceAll("\\{" + "petId" + "\\}", petId.toString))
 
     // query params
     val queryParams = new mutable.HashMap[String, String]
@@ -389,7 +413,7 @@ class PetApiAsyncHelper(client: TransportClient, config: SwaggerConfig) extends 
     )(implicit reader: ClientResponseReader[Unit]): Future[Unit] = {
     // create path and map variables
     val path = (addFmt("/pet/{petId}")
-      replaceAll ("\\{" + "petId" + "\\}",petId.toString))
+      replaceAll("\\{" + "petId" + "\\}", petId.toString))
 
     // query params
     val queryParams = new mutable.HashMap[String, String]
@@ -408,7 +432,7 @@ class PetApiAsyncHelper(client: TransportClient, config: SwaggerConfig) extends 
     )(implicit reader: ClientResponseReader[ApiResponse]): Future[ApiResponse] = {
     // create path and map variables
     val path = (addFmt("/pet/{petId}/uploadImage")
-      replaceAll ("\\{" + "petId" + "\\}",petId.toString))
+      replaceAll("\\{" + "petId" + "\\}", petId.toString))
 
     // query params
     val queryParams = new mutable.HashMap[String, String]

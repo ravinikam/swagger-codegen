@@ -8,19 +8,25 @@
 import Foundation
 
 
-open class OuterComposite: Codable {
+
+public struct OuterComposite: Codable {
 
     public var myNumber: OuterNumber?
     public var myString: OuterString?
     public var myBoolean: OuterBoolean?
 
-    public init() {}
+    public init(myNumber: OuterNumber?, myString: OuterString?, myBoolean: OuterBoolean?) {
+        self.myNumber = myNumber
+        self.myString = myString
+        self.myBoolean = myBoolean
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case myNumber = "my_number"
         case myString = "my_string"
         case myBoolean = "my_boolean"
     }
 
+
 }
+

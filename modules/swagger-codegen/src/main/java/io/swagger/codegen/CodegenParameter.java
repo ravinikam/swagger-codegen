@@ -13,11 +13,12 @@ public class CodegenParameter {
           collectionFormat, description, unescapedDescription, baseType, defaultValue, enumName;
 
     public String example; // example value (x-example)
+    public String testExample;
     public String jsonSchema;
-    public boolean isString, isNumeric, isInteger, isLong, isFloat, isDouble, isByteArray, isBinary, isBoolean, isDate, isDateTime, isUuid;
+    public boolean isString, isNumeric, isInteger, isLong, isNumber, isFloat, isDouble, isByteArray, isBinary, isBoolean, isDate, isDateTime, isUuid;
     public boolean isListContainer, isMapContainer;
     public boolean isFile, notFile;
-    public boolean isEnum;
+    public boolean isEnum, isConstEnumParam;
     public List<String> _enum;
     public Map<String, Object> allowableValues;
     public CodegenProperty items;
@@ -116,9 +117,11 @@ public class CodegenParameter {
         output.jsonSchema = this.jsonSchema;
         output.defaultValue = this.defaultValue;
         output.example = this.example;
+        output.testExample = this.testExample;
         output.isEnum = this.isEnum;
         if (this._enum != null) {
             output._enum = new ArrayList<String>(this._enum);
+            this.isConstEnumParam = (this._enum.size() == 1 && this.required);
         }
         if (this.allowableValues != null) {
             output.allowableValues = new HashMap<String, Object>(this.allowableValues);
@@ -138,6 +141,7 @@ public class CodegenParameter {
         output.isLong = this.isLong;
         output.isDouble = this.isDouble;
         output.isFloat = this.isFloat;
+        output.isNumber = this.isNumber;
         output.isBoolean = this.isBoolean;
         output.isDate = this.isDate;
         output.isDateTime = this.isDateTime;
@@ -217,6 +221,8 @@ public class CodegenParameter {
             return false;
         if (isLong != that.isLong)
             return false;
+        if (isNumber != that.isNumber)
+            return false;
         if (isFloat != that.isFloat)
             return false;
         if (isDouble != that.isDouble)
@@ -230,6 +236,8 @@ public class CodegenParameter {
         if (isDate != that.isDate)
             return false;
         if (isDateTime != that.isDateTime)
+            return false;
+        if (isUuid != that.isUuid)
             return false;
         if (isListContainer != that.isListContainer)
             return false;
@@ -306,12 +314,14 @@ public class CodegenParameter {
         result = 31 * result + (isInteger ? 13:31);
         result = 31 * result + (isLong ? 13:31);
         result = 31 * result + (isFloat ? 13:31);
+        result = 31 * result + (isNumber ? 13:31);
         result = 31 * result + (isDouble ? 13:31);
         result = 31 * result + (isByteArray ? 13:31);
         result = 31 * result + (isBinary ? 13:31);
         result = 31 * result + (isBoolean ? 13:31);
         result = 31 * result + (isDate ? 13:31);
         result = 31 * result + (isDateTime ? 13:31);
+        result = 31 * result + (isUuid ? 13:31);
         result = 31 * result + (isListContainer ? 13:31);
         result = 31 * result + (isMapContainer ? 13:31);
         result = 31 * result + (isFile ? 13:31);

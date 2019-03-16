@@ -9,15 +9,19 @@ import Foundation
 
 
 /** Model for testing reserved words */
-open class Return: Codable {
+
+public struct Return: Codable {
 
     public var _return: Int?
 
-    public init() {}
+    public init(_return: Int?) {
+        self._return = _return
+    }
 
-
-    private enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey { 
         case _return = "return"
     }
 
+
 }
+

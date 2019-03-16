@@ -8,19 +8,19 @@
 import Foundation
 
 
-open class MixedPropertiesAndAdditionalPropertiesClass: Codable {
+
+public struct MixedPropertiesAndAdditionalPropertiesClass: Codable {
 
     public var uuid: UUID?
     public var dateTime: Date?
     public var map: [String:Animal]?
 
-    public init() {}
-
-
-    private enum CodingKeys: String, CodingKey { 
-        case uuid = "uuid"
-        case dateTime = "dateTime"
-        case map = "map"
+    public init(uuid: UUID?, dateTime: Date?, map: [String:Animal]?) {
+        self.uuid = uuid
+        self.dateTime = dateTime
+        self.map = map
     }
 
+
 }
+

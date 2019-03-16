@@ -80,8 +80,6 @@ No authorization required
 
 Creates list of users with given input array
 
-
-
 ### Example
 ```csharp
 using System;
@@ -139,8 +137,6 @@ No authorization required
 > void CreateUsersWithListInput (List<User> body)
 
 Creates list of users with given input array
-
-
 
 ### Example
 ```csharp
@@ -260,8 +256,6 @@ No authorization required
 
 Get user by user name
 
-
-
 ### Example
 ```csharp
 using System;
@@ -277,7 +271,7 @@ namespace Example
         public void main()
         {
             var apiInstance = new UserApi();
-            var username = username_example;  // string | The name that needs to be fetched. Use user1 for testing. 
+            var username = username_example;  // string | The name that needs to be fetched. Use user1 for testing.
 
             try
             {
@@ -298,7 +292,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **username** | **string**| The name that needs to be fetched. Use user1 for testing.  | 
+ **username** | **string**| The name that needs to be fetched. Use user1 for testing. | 
 
 ### Return type
 
@@ -320,8 +314,6 @@ No authorization required
 > string LoginUser (string username, string password)
 
 Logs user into the system
-
-
 
 ### Example
 ```csharp
@@ -383,8 +375,6 @@ No authorization required
 > void LogoutUser ()
 
 Logs out current logged in user session
-
-
 
 ### Example
 ```csharp

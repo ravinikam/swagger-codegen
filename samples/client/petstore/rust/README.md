@@ -45,8 +45,10 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [Amount](docs/Amount.md)
  - [ApiResponse](docs/ApiResponse.md)
  - [Category](docs/Category.md)
+ - [Currency](docs/Currency.md)
  - [Order](docs/Order.md)
  - [Pet](docs/Pet.md)
  - [Tag](docs/Tag.md)
@@ -80,7 +82,7 @@ Example
     r, err := client.Service.Operation(auth, args)
 ```
 
-Or via OAuth2 module to automaticly refresh tokens and perform user authentication.
+Or via OAuth2 module to automatically refresh tokens and perform user authentication.
 ```
 	import 	"golang.org/x/oauth2"
 

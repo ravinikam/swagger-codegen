@@ -31,14 +31,14 @@ namespace IO.Swagger.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="ApiResponse" /> class.
         /// </summary>
-        /// <param name="Code">Code.</param>
-        /// <param name="Type">Type.</param>
-        /// <param name="Message">Message.</param>
-        public ApiResponse(int? Code = default(int?), string Type = default(string), string Message = default(string))
+        /// <param name="code">code.</param>
+        /// <param name="type">type.</param>
+        /// <param name="message">message.</param>
+        public ApiResponse(int? code = default(int?), string type = default(string), string message = default(string))
         {
-            this.Code = Code;
-            this.Type = Type;
-            this.Message = Message;
+            this.Code = code;
+            this.Type = type;
+            this.Message = message;
         }
         
         /// <summary>
@@ -78,7 +78,7 @@ namespace IO.Swagger.Model
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public string ToJson()
+        public virtual string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
@@ -86,40 +86,38 @@ namespace IO.Swagger.Model
         /// <summary>
         /// Returns true if objects are equal
         /// </summary>
-        /// <param name="obj">Object to be compared</param>
+        /// <param name="input">Object to be compared</param>
         /// <returns>Boolean</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object input)
         {
-            // credit: http://stackoverflow.com/a/10454552/677735
-            return this.Equals(obj as ApiResponse);
+            return this.Equals(input as ApiResponse);
         }
 
         /// <summary>
         /// Returns true if ApiResponse instances are equal
         /// </summary>
-        /// <param name="other">Instance of ApiResponse to be compared</param>
+        /// <param name="input">Instance of ApiResponse to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(ApiResponse other)
+        public bool Equals(ApiResponse input)
         {
-            // credit: http://stackoverflow.com/a/10454552/677735
-            if (other == null)
+            if (input == null)
                 return false;
 
             return 
                 (
-                    this.Code == other.Code ||
-                    this.Code != null &&
-                    this.Code.Equals(other.Code)
+                    this.Code == input.Code ||
+                    (this.Code != null &&
+                    this.Code.Equals(input.Code))
                 ) && 
                 (
-                    this.Type == other.Type ||
-                    this.Type != null &&
-                    this.Type.Equals(other.Type)
+                    this.Type == input.Type ||
+                    (this.Type != null &&
+                    this.Type.Equals(input.Type))
                 ) && 
                 (
-                    this.Message == other.Message ||
-                    this.Message != null &&
-                    this.Message.Equals(other.Message)
+                    this.Message == input.Message ||
+                    (this.Message != null &&
+                    this.Message.Equals(input.Message))
                 );
         }
 
@@ -129,18 +127,16 @@ namespace IO.Swagger.Model
         /// <returns>Hash code</returns>
         public override int GetHashCode()
         {
-            // credit: http://stackoverflow.com/a/263416/677735
             unchecked // Overflow is fine, just wrap
             {
-                int hash = 41;
-                // Suitable nullity checks etc, of course :)
+                int hashCode = 41;
                 if (this.Code != null)
-                    hash = hash * 59 + this.Code.GetHashCode();
+                    hashCode = hashCode * 59 + this.Code.GetHashCode();
                 if (this.Type != null)
-                    hash = hash * 59 + this.Type.GetHashCode();
+                    hashCode = hashCode * 59 + this.Type.GetHashCode();
                 if (this.Message != null)
-                    hash = hash * 59 + this.Message.GetHashCode();
-                return hash;
+                    hashCode = hashCode * 59 + this.Message.GetHashCode();
+                return hashCode;
             }
         }
     }

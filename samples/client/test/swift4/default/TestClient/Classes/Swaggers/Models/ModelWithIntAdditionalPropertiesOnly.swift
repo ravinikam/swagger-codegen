@@ -10,7 +10,7 @@ import Foundation
 
 /** This is an empty model with no properties and only additionalProperties of type int32 */
 
-open class ModelWithIntAdditionalPropertiesOnly: Codable {
+public struct ModelWithIntAdditionalPropertiesOnly: Codable {
 
 
     public var additionalProperties: [String:Int] = [:]
@@ -38,12 +38,15 @@ open class ModelWithIntAdditionalPropertiesOnly: Codable {
     }
 
     // Decodable protocol methods
-    
-    public required init(from decoder: Decoder) throws {
+
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: String.self)
 
         var nonAdditionalPropertyKeys = Set<String>()
         additionalProperties = try container.decodeMap(Int.self, excludedKeys: nonAdditionalPropertyKeys)
     }
+
+
+
 }
 

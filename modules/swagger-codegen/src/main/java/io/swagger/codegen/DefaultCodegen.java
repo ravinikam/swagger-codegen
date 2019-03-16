@@ -2,20 +2,8 @@ package io.swagger.codegen;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -119,7 +107,7 @@ public class DefaultCodegen {
     // Then translated back during JSON encoding and decoding
     protected Map<String, String> specialCharReplacements = new HashMap<String, String>();
     // When a model is an alias for a simple type
-    protected Map<String, String> typeAliases = new HashMap<>();
+    protected Map<String, String> typeAliases = null;
 
     protected String ignoreFilePathOverride;
 
@@ -138,6 +126,12 @@ public class DefaultCodegen {
 
         if (additionalProperties.containsKey(CodegenConstants.API_PACKAGE)) {
             this.setApiPackage((String) additionalProperties.get(CodegenConstants.API_PACKAGE));
+        }
+
+        if (additionalProperties.containsKey(CodegenConstants.HIDE_GENERATION_TIMESTAMP)) {
+            setHideGenerationTimestamp(convertPropertyToBooleanAndWriteBack(CodegenConstants.HIDE_GENERATION_TIMESTAMP));
+        } else {
+            additionalProperties.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, hideGenerationTimestamp);
         }
 
         if (additionalProperties.containsKey(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG)) {
@@ -164,7 +158,7 @@ public class DefaultCodegen {
         }
 
         if (additionalProperties.containsKey(CodegenConstants.REMOVE_OPERATION_ID_PREFIX)) {
-            this.setSortParamsByRequiredFlag(Boolean.valueOf(additionalProperties
+            this.setRemoveOperationIdPrefix(Boolean.valueOf(additionalProperties
                     .get(CodegenConstants.REMOVE_OPERATION_ID_PREFIX).toString()));
         }
     }
@@ -203,11 +197,11 @@ public class DefaultCodegen {
             for (String name : allModels.keySet()) {
                 CodegenModel cm = allModels.get(name);
                 CodegenModel parent = allModels.get(cm.parent);
-                // if a discriminator exists on the parent, don't add this child to the inheritance heirarchy
+                // if a discriminator exists on the parent, don't add this child to the inheritance hierarchy
                 // TODO Determine what to do if the parent discriminator name == the grandparent discriminator name
                 while (parent != null) {
                     if (parent.children == null) {
-                       parent.children = new ArrayList<CodegenModel>();
+                        parent.children = new ArrayList<CodegenModel>();
                     }
                     parent.children.add(cm);
                     if (parent.discriminator == null) {
@@ -275,21 +269,25 @@ public class DefaultCodegen {
     }
 
     /**
-     * Returns the common prefix of variables for enum naming
+     * Returns the common prefix of variables for enum naming if 
+     * two or more variables are present
      *
      * @param vars List of variable names
      * @return the common prefix for naming
      */
     public String findCommonPrefixOfVars(List<Object> vars) {
-        try {
-            String[] listStr = vars.toArray(new String[vars.size()]);
-            String prefix = StringUtils.getCommonPrefix(listStr);
-            // exclude trailing characters that should be part of a valid variable
-            // e.g. ["status-on", "status-off"] => "status-" (not "status-o")
-            return prefix.replaceAll("[a-zA-Z0-9]+\\z", "");
-        } catch (ArrayStoreException e) {
-            return "";
+        if (vars.size() > 1) {
+            try {
+                String[] listStr = vars.toArray(new String[vars.size()]);
+                String prefix = StringUtils.getCommonPrefix(listStr);
+                // exclude trailing characters that should be part of a valid variable
+                // e.g. ["status-on", "status-off"] => "status-" (not "status-o")
+                return prefix.replaceAll("[a-zA-Z0-9]+\\z", "");
+            } catch (ArrayStoreException e) {
+                // do nothing, just return default value
+            }
         }
+        return "";
     }
 
     /**
@@ -993,7 +991,7 @@ public class DefaultCodegen {
             String type = additionalProperties2.getType();
             if (null == type) {
                 LOGGER.error("No Type defined for Additional Property " + additionalProperties2 + "\n" //
-                      + "\tIn Property: " + p);
+                        + "\tIn Property: " + p);
             }
             String inner = getSwaggerType(additionalProperties2);
             return instantiationTypes.get("map") + "<String, " + inner + ">";
@@ -1130,7 +1128,7 @@ public class DefaultCodegen {
         String datatype = null;
         if (p instanceof StringProperty && "number".equals(p.getFormat())) {
             datatype = "BigDecimal";
-        } else if (p instanceof ByteArrayProperty) {
+        } else if ((p instanceof ByteArrayProperty) || (p instanceof StringProperty && "byte".equals(p.getFormat()))) {
             datatype = "ByteArray";
         } else if (p instanceof BinaryProperty) {
             datatype = "binary";
@@ -1312,6 +1310,10 @@ public class DefaultCodegen {
      * @return Codegen Model object
      */
     public CodegenModel fromModel(String name, Model model, Map<String, Model> allDefinitions) {
+        if (typeAliases == null) {
+            // Only do this once during first call
+            typeAliases = getAllAliases(allDefinitions);
+        }
         CodegenModel m = CodegenModelFactory.newInstance(CodegenModelType.MODEL);
         if (reservedWords.contains(name)) {
             m.name = escapeReservedWord(name);
@@ -1327,15 +1329,18 @@ public class DefaultCodegen {
         m.modelJson = Json.pretty(model);
         m.externalDocs = model.getExternalDocs();
         m.vendorExtensions = model.getVendorExtensions();
+        m.isAlias = typeAliases.containsKey(name);
 
         if (model instanceof ModelImpl) {
-          ModelImpl modelImpl = (ModelImpl) model;
+            ModelImpl modelImpl = (ModelImpl) model;
             m.discriminator = modelImpl.getDiscriminator();
-
+            if (m.discriminator != null) {
+                m.discriminatorClassVarName = toParamName(m.discriminator);
+            }
             if (modelImpl.getXml() != null) {
-              m.xmlPrefix = modelImpl.getXml().getPrefix();
-              m.xmlNamespace = modelImpl.getXml().getNamespace();
-              m.xmlName = modelImpl.getXml().getName();
+                m.xmlPrefix = modelImpl.getXml().getPrefix();
+                m.xmlNamespace = modelImpl.getXml().getNamespace();
+                m.xmlName = modelImpl.getXml().getName();
             }
         }
 
@@ -1360,14 +1365,17 @@ public class DefaultCodegen {
                 int modelImplCnt = 0; // only one inline object allowed in a ComposedModel
                 for (Model innerModel: ((ComposedModel)model).getAllOf()) {
                     if (innerModel instanceof ModelImpl) {
-                      ModelImpl modelImpl = (ModelImpl) innerModel;
+                        ModelImpl modelImpl = (ModelImpl) innerModel;
                         if (m.discriminator == null) {
                             m.discriminator = modelImpl.getDiscriminator();
+                            if (m.discriminator != null) {
+                                m.discriminatorClassVarName = toParamName(m.discriminator);
+                            }
                         }
                         if (modelImpl.getXml() != null) {
-                          m.xmlPrefix = modelImpl.getXml().getPrefix();
-                          m.xmlNamespace = modelImpl.getXml().getNamespace();
-                          m.xmlName = modelImpl.getXml().getName();
+                            m.xmlPrefix = modelImpl.getXml().getPrefix();
+                            m.xmlNamespace = modelImpl.getXml().getNamespace();
+                            m.xmlName = modelImpl.getXml().getName();
                         }
                         if (modelImplCnt++ > 1) {
                             LOGGER.warn("More than one inline schema specified in allOf:. Only the first one is recognized. All others are ignored.");
@@ -1380,7 +1388,7 @@ public class DefaultCodegen {
                 allRequired = null;
             }
             // parent model
-            RefModel parent = (RefModel) composed.getParent();
+            Model parent = (Model) composed.getParent();
 
             // interfaces (intermediate models)
             if (composed.getInterfaces() != null) {
@@ -1413,16 +1421,31 @@ public class DefaultCodegen {
             }
 
             if (parent != null) {
-                final String parentRef = parent.getSimpleRef();
-                m.parentSchema = parentRef;
-                m.parent = toModelName(parent.getSimpleRef());
-                addImport(m, m.parent);
-                if (allDefinitions != null) {
-                    final Model parentModel = allDefinitions.get(m.parentSchema);
-                    if (supportsInheritance) {
-                        addProperties(allProperties, allRequired, parentModel, allDefinitions);
-                    } else {
-                        addProperties(properties, required, parentModel, allDefinitions);
+                String parentName = null;
+                if(parent instanceof RefModel) {
+                    parentName = ((RefModel)parent).getSimpleRef();
+                }
+                else {
+                    if(parent instanceof ModelImpl) {
+                        // check for a title
+                        ModelImpl parentImpl = (ModelImpl) parent;
+                        if(StringUtils.isNotBlank(parentImpl.getTitle())) {
+                            parentName = parentImpl.getTitle();
+                        }
+                    }
+                }
+
+                if(parentName != null) {
+                    m.parentSchema = parentName;
+                    m.parent = toModelName(parentName);
+                    addImport(m, m.parent);
+                    if (allDefinitions != null) {
+                        final Model parentModel = allDefinitions.get(m.parentSchema);
+                        if (supportsInheritance) {
+                            addProperties(allProperties, allRequired, parentModel, allDefinitions);
+                        } else {
+                            addProperties(properties, required, parentModel, allDefinitions);
+                        }
                     }
                 }
             }
@@ -1439,15 +1462,11 @@ public class DefaultCodegen {
                     addProperties(allProperties, allRequired, child, allDefinitions);
                 }
             }
-            addVars(m, properties, required, allProperties, allRequired);
+            addVars(m, properties, required, allDefinitions, allProperties, allRequired);
         } else {
             ModelImpl impl = (ModelImpl) model;
             if (impl.getType() != null) {
                 Property p = PropertyBuilder.build(impl.getType(), impl.getFormat(), null);
-                if (!impl.getType().equals("object") && impl.getEnum() == null) {
-                    typeAliases.put(name, impl.getType());
-                    m.isAlias = true;
-                }
                 m.dataType = getSwaggerType(p);
             }
             if(impl.getEnum() != null && impl.getEnum().size() > 0) {
@@ -1459,7 +1478,7 @@ public class DefaultCodegen {
             if (impl.getAdditionalProperties() != null) {
                 addAdditionPropertiesToCodeGenModel(m, impl);
             }
-            addVars(m, impl.getProperties(), impl.getRequired());
+            addVars(m, impl.getProperties(), impl.getRequired(), allDefinitions);
         }
 
         if (m.vars != null) {
@@ -1568,12 +1587,12 @@ public class DefaultCodegen {
             property.isReadOnly = p.getReadOnly();
         }
         if (p.getXml() != null) {
-          if (p.getXml().getAttribute() != null) {
-            property.isXmlAttribute = p.getXml().getAttribute();
-          }
-          property.xmlPrefix = p.getXml().getPrefix();
-          property.xmlName = p.getXml().getName();
-          property.xmlNamespace = p.getXml().getNamespace();
+            if (p.getXml().getAttribute() != null) {
+                property.isXmlAttribute = p.getXml().getAttribute();
+            }
+            property.xmlPrefix = p.getXml().getPrefix();
+            property.xmlName = p.getXml().getName();
+            property.xmlNamespace = p.getXml().getNamespace();
         }
         property.vendorExtensions = p.getVendorExtensions();
 
@@ -1581,18 +1600,18 @@ public class DefaultCodegen {
         if (p instanceof AbstractNumericProperty) {
             AbstractNumericProperty np = (AbstractNumericProperty) p;
             if (np.getMinimum() != null) {
-               if (p instanceof BaseIntegerProperty) { // int, long
-                 property.minimum = String.valueOf(np.getMinimum().longValue());
-               } else { // double, decimal
-                 property.minimum = String.valueOf(np.getMinimum());
-               }
+                if (p instanceof BaseIntegerProperty) { // int, long
+                    property.minimum = String.valueOf(np.getMinimum().longValue());
+                } else { // double, decimal
+                    property.minimum = String.valueOf(np.getMinimum());
+                }
             }
             if (np.getMaximum() != null) {
-               if (p instanceof BaseIntegerProperty) { // int, long
-                  property.maximum = String.valueOf(np.getMaximum().longValue());
-               } else { // double, decimal
-                  property.maximum = String.valueOf(np.getMaximum());
-               }
+                if (p instanceof BaseIntegerProperty) { // int, long
+                    property.maximum = String.valueOf(np.getMaximum().longValue());
+                } else { // double, decimal
+                    property.maximum = String.valueOf(np.getMaximum());
+                }
             }
 
             if (np.getExclusiveMinimum() != null) {
@@ -1616,7 +1635,7 @@ public class DefaultCodegen {
                 allowableValues.put("max", np.getMaximum());
             }
             if(allowableValues.size() > 0) {
-              property.allowableValues = allowableValues;
+                property.allowableValues = allowableValues;
             }
         }
 
@@ -1656,7 +1675,7 @@ public class DefaultCodegen {
                 List<Integer> _enum = sp.getEnum();
                 property._enum = new ArrayList<String>();
                 for(Integer i : _enum) {
-                  property._enum.add(i.toString());
+                    property._enum.add(i.toString());
                 }
                 property.isEnum = true;
 
@@ -1674,7 +1693,7 @@ public class DefaultCodegen {
                 List<Long> _enum = sp.getEnum();
                 property._enum = new ArrayList<String>();
                 for(Long i : _enum) {
-                  property._enum.add(i.toString());
+                    property._enum.add(i.toString());
                 }
                 property.isEnum = true;
 
@@ -1695,9 +1714,9 @@ public class DefaultCodegen {
             property.isFile = true;
         }
         if (p instanceof UUIDProperty) {
+            property.isString =true;
             property.isUuid = true;
-            // keep isString to true to make it backward compatible
-            property.isString = true;
+
         }
         if (p instanceof ByteArrayProperty) {
             property.isByteArray = true;
@@ -1705,20 +1724,7 @@ public class DefaultCodegen {
         // type is number and without format
         if (p instanceof DecimalProperty && !(p instanceof DoubleProperty) && !(p instanceof FloatProperty)) {
             DecimalProperty sp = (DecimalProperty) p;
-            property.isFloat = true;
-            /*if (sp.getEnum() != null) {
-                List<Double> _enum = sp.getEnum();
-                property._enum = new ArrayList<String>();
-                for(Double i : _enum) {
-                  property._enum.add(i.toString());
-                }
-                property.isEnum = true;
-
-                // legacy support
-                Map<String, Object> allowableValues = new HashMap<String, Object>();
-                allowableValues.put("values", _enum);
-                property.allowableValues = allowableValues;
-            }*/
+            property.isNumber = true;
         }
         if (p instanceof DoubleProperty) {
             DoubleProperty sp = (DoubleProperty) p;
@@ -1728,7 +1734,7 @@ public class DefaultCodegen {
                 List<Double> _enum = sp.getEnum();
                 property._enum = new ArrayList<String>();
                 for(Double i : _enum) {
-                  property._enum.add(i.toString());
+                    property._enum.add(i.toString());
                 }
                 property.isEnum = true;
 
@@ -1746,7 +1752,7 @@ public class DefaultCodegen {
                 List<Float> _enum = sp.getEnum();
                 property._enum = new ArrayList<String>();
                 for(Float i : _enum) {
-                  property._enum.add(i.toString());
+                    property._enum.add(i.toString());
                 }
                 property.isEnum = true;
 
@@ -1764,7 +1770,7 @@ public class DefaultCodegen {
                 List<String> _enum = sp.getEnum();
                 property._enum = new ArrayList<String>();
                 for(String i : _enum) {
-                  property._enum.add(i);
+                    property._enum.add(i);
                 }
                 property.isEnum = true;
 
@@ -1781,7 +1787,7 @@ public class DefaultCodegen {
                 List<String> _enum = sp.getEnum();
                 property._enum = new ArrayList<String>();
                 for(String i : _enum) {
-                  property._enum.add(i);
+                    property._enum.add(i);
                 }
                 property.isEnum = true;
 
@@ -1804,16 +1810,16 @@ public class DefaultCodegen {
 
         property.baseType = getSwaggerType(p);
 
-          if (p instanceof ArrayProperty) {
+        if (p instanceof ArrayProperty) {
             property.isContainer = true;
             property.isListContainer = true;
             property.containerType = "array";
             property.baseType = getSwaggerType(p);
             if (p.getXml() != null) {
-              property.isXmlWrapped = p.getXml().getWrapped() == null ? false : p.getXml().getWrapped();
-              property.xmlPrefix= p.getXml().getPrefix();
-              property.xmlNamespace = p.getXml().getNamespace();
-              property.xmlName = p.getXml().getName();
+                property.isXmlWrapped = p.getXml().getWrapped() == null ? false : p.getXml().getWrapped();
+                property.xmlPrefix= p.getXml().getPrefix();
+                property.xmlNamespace = p.getXml().getNamespace();
+                property.xmlName = p.getXml().getName();
             }
             // handle inner property
             ArrayProperty ap = (ArrayProperty) p;
@@ -1821,11 +1827,11 @@ public class DefaultCodegen {
             property.minItems = ap.getMinItems();
             String itemName = (String) p.getVendorExtensions().get("x-item-name");
             if (itemName == null) {
-              itemName = property.name;
+                itemName = property.name;
             }
             CodegenProperty cp = fromProperty(itemName, ap.getItems());
             updatePropertyForArray(property, cp);
-          } else if (p instanceof MapProperty) {
+        } else if (p instanceof MapProperty) {
             MapProperty ap = (MapProperty) p;
 
             property.isContainer = true;
@@ -1914,7 +1920,7 @@ public class DefaultCodegen {
     protected Boolean isPropertyInnerMostEnum(CodegenProperty property) {
         CodegenProperty currentProperty = property;
         while (currentProperty != null && (Boolean.TRUE.equals(currentProperty.isMapContainer)
-                    || Boolean.TRUE.equals(currentProperty.isListContainer))) {
+                || Boolean.TRUE.equals(currentProperty.isListContainer))) {
             currentProperty = currentProperty.items;
         }
 
@@ -1924,7 +1930,7 @@ public class DefaultCodegen {
     protected Map<String, Object> getInnerEnumAllowableValues(CodegenProperty property) {
         CodegenProperty currentProperty = property;
         while (currentProperty != null && (Boolean.TRUE.equals(currentProperty.isMapContainer)
-                    || Boolean.TRUE.equals(currentProperty.isListContainer))) {
+                || Boolean.TRUE.equals(currentProperty.isListContainer))) {
             currentProperty = currentProperty.items;
         }
 
@@ -1939,7 +1945,7 @@ public class DefaultCodegen {
     protected void updateDataTypeWithEnumForArray(CodegenProperty property) {
         CodegenProperty baseItem = property.items;
         while (baseItem != null && (Boolean.TRUE.equals(baseItem.isMapContainer)
-                    || Boolean.TRUE.equals(baseItem.isListContainer))) {
+                || Boolean.TRUE.equals(baseItem.isListContainer))) {
             baseItem = baseItem.items;
         }
         if (baseItem != null) {
@@ -1954,6 +1960,8 @@ public class DefaultCodegen {
             if (property.defaultValue != null) {
                 property.defaultValue = property.defaultValue.replace(baseItem.baseType, toEnumName(baseItem));
             }
+
+            updateCodegenPropertyEnum(property);
         }
     }
 
@@ -1964,7 +1972,7 @@ public class DefaultCodegen {
     protected void updateDataTypeWithEnumForMap(CodegenProperty property) {
         CodegenProperty baseItem = property.items;
         while (baseItem != null && (Boolean.TRUE.equals(baseItem.isMapContainer)
-                    || Boolean.TRUE.equals(baseItem.isListContainer))) {
+                || Boolean.TRUE.equals(baseItem.isListContainer))) {
             baseItem = baseItem.items;
         }
 
@@ -2044,6 +2052,9 @@ public class DefaultCodegen {
         CodegenOperation op = CodegenModelFactory.newInstance(CodegenModelType.OPERATION);
         Set<String> imports = new HashSet<String>();
         op.vendorExtensions = operation.getVendorExtensions();
+
+        // store the original operationId for plug-in
+        op.operationIdOriginal = operation.getOperationId();
 
         String operationId = getOrGenerateOperationId(operation, path, httpMethod);
         // remove prefix in operationId
@@ -2165,10 +2176,10 @@ public class DefaultCodegen {
             op.responses.get(op.responses.size() - 1).hasMore = false;
 
             if (methodResponse != null) {
-                if (methodResponse.getSchema() != null) {
-                    CodegenProperty cm = fromProperty("response", methodResponse.getSchema());
-
-                    Property responseProperty = methodResponse.getSchema();
+                final Property responseProperty = methodResponse.getSchema();
+                if (responseProperty != null) {
+                    responseProperty.setRequired(true);
+                    CodegenProperty cm = fromProperty("response", responseProperty);
 
                     if (responseProperty instanceof ArrayProperty) {
                         ArrayProperty ap = (ArrayProperty) responseProperty;
@@ -2185,7 +2196,7 @@ public class DefaultCodegen {
                             op.returnBaseType = cm.baseType;
                         }
                     }
-                    op.examples = new ExampleGenerator(definitions).generate(methodResponse.getExamples(), operation.getProduces(), responseProperty);
+                    op.examples = getExamples(definitions, methodResponse.getExamples(), operation.getProduces(), responseProperty);
                     op.defaultResponse = toDefaultValue(responseProperty);
                     op.returnType = cm.datatype;
                     op.hasReference = definitions != null && definitions.containsKey(op.returnBaseType);
@@ -2228,6 +2239,7 @@ public class DefaultCodegen {
         List<CodegenParameter> headerParams = new ArrayList<CodegenParameter>();
         List<CodegenParameter> cookieParams = new ArrayList<CodegenParameter>();
         List<CodegenParameter> formParams = new ArrayList<CodegenParameter>();
+        List<CodegenParameter> requiredParams = new ArrayList<CodegenParameter>();
 
         if (parameters != null) {
             for (Parameter param : parameters) {
@@ -2250,13 +2262,6 @@ public class DefaultCodegen {
                     }
                 }
 
-                // set isPrimitiveType and baseType for allParams
-                /*if (languageSpecificPrimitives.contains(p.baseType)) {
-                    p.isPrimitiveType = true;
-                    p.baseType = getSwaggerType(p);
-                }*/
-
-
                 allParams.add(p);
                 // Issue #2561 (neilotoole) : Moved setting of is<Type>Param flags
                 // from here to fromParameter().
@@ -2272,12 +2277,15 @@ public class DefaultCodegen {
                     bodyParam = p;
                     bodyParams.add(p.copy());
                     if(definitions != null) {
-                        op.requestBodyExamples = new ExampleGenerator(definitions).generate(null, operation.getConsumes(), bodyParam.dataType);
+                        op.requestBodyExamples = getExamples(definitions, null, consumes, bodyParam.dataType);
                     }
                 } else if (param instanceof FormParameter) {
                     formParams.add(p.copy());
                 }
-                if (!p.required) {
+
+                if (p.required) { //required parameters
+                    requiredParams.add(p.copy());
+                } else { // optional parameters
                     op.hasOptionalParams = true;
                 }
             }
@@ -2294,14 +2302,14 @@ public class DefaultCodegen {
 
         // move "required" parameters in front of "optional" parameters
         if (sortParamsByRequiredFlag) {
-          Collections.sort(allParams, new Comparator<CodegenParameter>() {
-              @Override
-              public int compare(CodegenParameter one, CodegenParameter another) {
-                  if (one.required == another.required) return 0;
-                  else if (one.required) return -1;
-                  else return 1;
-              }
-          });
+            Collections.sort(allParams, new Comparator<CodegenParameter>() {
+                @Override
+                public int compare(CodegenParameter one, CodegenParameter another) {
+                    if (one.required == another.required) return 0;
+                    else if (one.required) return -1;
+                    else return 1;
+                }
+            });
         }
 
         op.allParams = addHasMore(allParams);
@@ -2311,6 +2319,7 @@ public class DefaultCodegen {
         op.headerParams = addHasMore(headerParams);
         // op.cookieParams = cookieParams;
         op.formParams = addHasMore(formParams);
+        op.requiredParams = addHasMore(requiredParams);
         op.externalDocs = operation.getExternalDocs();
         // legacy support
         op.nickname = op.operationId;
@@ -2318,6 +2327,7 @@ public class DefaultCodegen {
         if (op.allParams.size() > 0) {
             op.hasParams = true;
         }
+        op.hasRequiredParams = op.requiredParams.size() > 0;
 
         // set Restful Flag
         op.isRestfulShow = op.isRestfulShow();
@@ -2326,6 +2336,9 @@ public class DefaultCodegen {
         op.isRestfulUpdate = op.isRestfulUpdate();
         op.isRestfulDestroy = op.isRestfulDestroy();
         op.isRestful = op.isRestful();
+
+        // TODO: fix error with resolved yaml/json generators in order to enable this again.
+        //configureDataForTestTemplate(op);
 
         return op;
     }
@@ -2370,7 +2383,11 @@ public class DefaultCodegen {
             }
             r.dataType = cm.datatype;
 
-            if (Boolean.TRUE.equals(cm.isString)) {
+            if (Boolean.TRUE.equals(cm.isString) && Boolean.TRUE.equals(cm.isUuid)) {
+                r.isUuid = true;
+            } else if (Boolean.TRUE.equals(cm.isByteArray)) {
+                r.isByteArray = true;
+            } else if (Boolean.TRUE.equals(cm.isString)) {
                 r.isString = true;
             } else if (Boolean.TRUE.equals(cm.isBoolean)) {
                 r.isBoolean = true;
@@ -2380,14 +2397,15 @@ public class DefaultCodegen {
             } else if (Boolean.TRUE.equals(cm.isInteger)) {
                 r.isInteger = true;
                 r.isNumeric = true;
+            } else if (Boolean.TRUE.equals(cm.isNumber)) {
+                r.isNumber = true;
+                r.isNumeric = true;
             } else if (Boolean.TRUE.equals(cm.isDouble)) {
                 r.isDouble = true;
                 r.isNumeric = true;
             } else if (Boolean.TRUE.equals(cm.isFloat)) {
                 r.isFloat = true;
                 r.isNumeric = true;
-            } else if (Boolean.TRUE.equals(cm.isByteArray)) {
-                r.isByteArray = true;
             } else if (Boolean.TRUE.equals(cm.isBinary)) {
                 r.isBinary = true;
             } else if (Boolean.TRUE.equals(cm.isFile)) {
@@ -2396,8 +2414,6 @@ public class DefaultCodegen {
                 r.isDate = true;
             } else if (Boolean.TRUE.equals(cm.isDateTime)) {
                 r.isDateTime = true;
-            } else if (Boolean.TRUE.equals(cm.isUuid)) {
-                r.isUuid = true;
             } else {
                 LOGGER.debug("Property type is not primitive: " + cm.datatype);
             }
@@ -2528,7 +2544,12 @@ public class DefaultCodegen {
             // set boolean flag (e.g. isString)
             setParameterBooleanFlagWithCodegenProperty(p, cp);
 
-            p.dataType = cp.datatype;
+            String parameterDataType = this.getParameterDataType(param, property);
+            if (parameterDataType != null) {
+                p.dataType = parameterDataType;
+            } else {
+                p.dataType = cp.datatype;
+            }
             p.dataFormat = cp.dataFormat;
             if(cp.isEnum) {
                 p.datatypeWithEnum = cp.datatypeWithEnum;
@@ -2667,6 +2688,10 @@ public class DefaultCodegen {
                         name = getTypeDeclaration(name);
                     }
                     p.dataType = name;
+                } else {
+                    if (sub instanceof ComposedModel) {
+                        p.dataType = "object";
+                    }
                 }
             }
             p.paramName = toParamName(bp.getName());
@@ -2701,6 +2726,8 @@ public class DefaultCodegen {
         // if not specified in x-example, generate a default value
         if (p.vendorExtensions.containsKey("x-example")) {
             p.example = Json.pretty(p.vendorExtensions.get("x-example"));
+        } else if (Boolean.TRUE.equals(p.isUuid) && (Boolean.TRUE.equals(p.isString))) {
+            p.example = "38400000-8cf0-11bd-b23e-10b96e4ef00d";
         } else if (Boolean.TRUE.equals(p.isString)) {
             p.example = p.paramName + "_example";
         } else if (Boolean.TRUE.equals(p.isBoolean)) {
@@ -2711,6 +2738,8 @@ public class DefaultCodegen {
             p.example = "56";
         } else if (Boolean.TRUE.equals(p.isFloat)) {
             p.example = "3.4";
+        } else if (Boolean.TRUE.equals(p.isNumber)) {
+            p.example = "8.14";
         } else if (Boolean.TRUE.equals(p.isDouble)) {
             p.example = "1.2";
         } else if (Boolean.TRUE.equals(p.isBinary)) {
@@ -2723,8 +2752,6 @@ public class DefaultCodegen {
             p.example = "2013-10-20";
         } else if (Boolean.TRUE.equals(p.isDateTime)) {
             p.example = "2013-10-20T19:20:30+01:00";
-        } else if (Boolean.TRUE.equals(p.isUuid)) {
-            p.example = "38400000-8cf0-11bd-b23e-10b96e4ef00d";
         } else if (Boolean.TRUE.equals(p.isFile)) {
             p.example = "/path/to/file.txt";
         }
@@ -2737,12 +2764,32 @@ public class DefaultCodegen {
         return p;
     }
 
+   /**
+    * Returns the data type of a parameter.
+    * Returns null by default to use the CodegenProperty.datatype value
+    * @param parameter
+    * @param property
+    * @return
+    */
+   protected String getParameterDataType(Parameter parameter, Property property) {
+        return null;
+   }
+
+
     public boolean isDataTypeBinary(String dataType) {
-        return dataType.toLowerCase().startsWith("byte");
+        if (dataType != null) {
+            return dataType.toLowerCase().startsWith("byte");
+        } else {
+            return false;
+        }
     }
 
     public boolean isDataTypeFile(String dataType) {
-        return dataType.toLowerCase().equals("file");
+        if (dataType != null) {
+            return dataType.toLowerCase().equals("file");
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -2766,6 +2813,7 @@ public class DefaultCodegen {
             sec.name = entry.getKey();
             sec.type = schemeDefinition.getType();
             sec.isCode = sec.isPassword = sec.isApplication = sec.isImplicit = false;
+            sec.vendorExtensions = schemeDefinition.getVendorExtensions();
 
             if (schemeDefinition instanceof ApiKeyAuthDefinition) {
                 final ApiKeyAuthDefinition apiKeyDefinition = (ApiKeyAuthDefinition) schemeDefinition;
@@ -2845,10 +2893,10 @@ public class DefaultCodegen {
     }
 
     protected void setReservedWordsLowerCase(List<String> words) {
-      reservedWords = new HashSet<String>();
-      for (String word : words) {
-          reservedWords.add(word.toLowerCase());
-      }
+        reservedWords = new HashSet<String>();
+        for (String word : words) {
+            reservedWords.add(word.toLowerCase());
+        }
     }
 
     protected boolean isReservedWord(String word) {
@@ -2898,7 +2946,7 @@ public class DefaultCodegen {
      * @return true if the library/module/package of the corresponding type needs to be imported
      */
     protected boolean needToImport(String type) {
-        return !defaultIncludes.contains(type)
+        return StringUtils.isNotBlank(type) && !defaultIncludes.contains(type)
             && !languageSpecificPrimitives.contains(type);
     }
 
@@ -3026,6 +3074,8 @@ public class DefaultCodegen {
         word = word.replaceAll(firstPattern, replacementPattern);
         word = word.replaceAll(secondPattern, replacementPattern);
         word = word.replace('-', '_');
+        // replace space with underscore
+        word = word.replace(' ', '_');
         word = word.toLowerCase();
         return word;
     }
@@ -3069,12 +3119,12 @@ public class DefaultCodegen {
         }
     }
 
-    private void addVars(CodegenModel m, Map<String, Property> properties, List<String> required) {
-        addVars(m, properties, required, null, null);
+    private void addVars(CodegenModel m, Map<String, Property> properties, List<String> required, Map<String, Model> allDefinitions) {
+        addVars(m, properties, required, allDefinitions, null, null);
     }
 
-    private void addVars(CodegenModel m, Map<String, Property> properties, List<String> required,
-            Map<String, Property> allProperties, List<String> allRequired) {
+    private void addVars(CodegenModel m, Map<String, Property> properties, List<String> required, Map<String, Model> allDefinitions,
+                         Map<String, Property> allProperties, List<String> allRequired) {
 
         m.hasRequired = false;
         if (properties != null && !properties.isEmpty()) {
@@ -3084,7 +3134,7 @@ public class DefaultCodegen {
 
             Set<String> mandatory = required == null ? Collections.<String> emptySet()
                     : new TreeSet<String>(required);
-            addVars(m, m.vars, properties, mandatory);
+            addVars(m, m.vars, properties, mandatory, allDefinitions);
             m.allMandatory = m.mandatory = mandatory;
         } else {
             m.emptyVars = true;
@@ -3095,12 +3145,12 @@ public class DefaultCodegen {
         if (allProperties != null) {
             Set<String> allMandatory = allRequired == null ? Collections.<String> emptySet()
                     : new TreeSet<String>(allRequired);
-            addVars(m, m.allVars, allProperties, allMandatory);
+            addVars(m, m.allVars, allProperties, allMandatory, allDefinitions);
             m.allMandatory = allMandatory;
         }
     }
 
-    private void addVars(CodegenModel m, List<CodegenProperty> vars, Map<String, Property> properties, Set<String> mandatory) {
+    private void addVars(CodegenModel m, List<CodegenProperty> vars, Map<String, Property> properties, Set<String> mandatory, Map<String, Model> allDefinitions) {
         // convert set to list so that we can access the next entry in the loop
         List<Map.Entry<String, Property>> propertyList = new ArrayList<Map.Entry<String, Property>>(properties.entrySet());
         final int totalCount = propertyList.size();
@@ -3121,6 +3171,17 @@ public class DefaultCodegen {
                     // FIXME: if supporting inheritance, when called a second time for allProperties it is possible for
                     // m.hasEnums to be set incorrectly if allProperties has enumerations but properties does not.
                     m.hasEnums = true;
+                }
+
+                if (allDefinitions != null && prop instanceof RefProperty) {
+                    RefProperty refProperty = (RefProperty) prop;
+                    Model model =  allDefinitions.get(refProperty.getSimpleRef());
+                    if (model instanceof ModelImpl) {
+                        ModelImpl modelImpl = (ModelImpl) model;
+                        cp.pattern = modelImpl.getPattern();
+                        cp.minLength = modelImpl.getMinLength();
+                        cp.maxLength = modelImpl.getMaxLength();
+                    }
                 }
 
                 // set model's hasOnlyReadOnly to false if the property is read-only
@@ -3164,6 +3225,31 @@ public class DefaultCodegen {
                 }
             }
         }
+    }
+
+    /**
+     * Determine all of the types in the model definitions that are aliases of
+     * simple types.
+     * @param allDefinitions The complete set of model definitions.
+     * @return A mapping from model name to type alias
+     */
+    private static Map<String, String> getAllAliases(Map<String, Model> allDefinitions) {
+        Map<String, String> aliases = new HashMap<>();
+        if (allDefinitions != null) {
+            for (Map.Entry<String, Model> entry : allDefinitions.entrySet()) {
+                String swaggerName = entry.getKey();
+                Model m = entry.getValue();
+                if (m instanceof ModelImpl) {
+                    ModelImpl impl = (ModelImpl) m;
+                    if (impl.getType() != null &&
+                            !impl.getType().equals("object") &&
+                            impl.getEnum() == null) {
+                        aliases.put(swaggerName, impl.getType());
+                    }
+                }
+            }
+        }
+        return aliases;
     }
 
     /**
@@ -3255,7 +3341,13 @@ public class DefaultCodegen {
         p = Pattern.compile("(_)(.)");
         m = p.matcher(word);
         while (m.find()) {
-            word = m.replaceFirst(m.group(2).toUpperCase());
+            String original = m.group(2);
+            String upperCase = original.toUpperCase();
+            if (original.equals(upperCase)) {
+                word = word.replaceFirst("_", "");
+            } else {
+                word = m.replaceFirst(upperCase);
+            }
             m = p.matcher(word);
         }
 
@@ -3276,7 +3368,7 @@ public class DefaultCodegen {
 
     public String apiFilename(String templateName, String tag) {
         String suffix = apiTemplateFiles().get(templateName);
-        return apiFileFolder() + '/' + toApiFilename(tag) + suffix;
+        return apiFileFolder() + File.separator + toApiFilename(tag) + suffix;
     }
 
     /**
@@ -3289,7 +3381,7 @@ public class DefaultCodegen {
      */
     public String apiDocFilename(String templateName, String tag) {
         String suffix = apiDocTemplateFiles().get(templateName);
-        return apiDocFileFolder() + '/' + toApiDocFilename(tag) + suffix;
+        return apiDocFileFolder() + File.separator + toApiDocFilename(tag) + suffix;
     }
 
     /**
@@ -3302,7 +3394,7 @@ public class DefaultCodegen {
      */
     public String apiTestFilename(String templateName, String tag) {
         String suffix = apiTestTemplateFiles().get(templateName);
-        return apiTestFileFolder() + '/' + toApiTestFilename(tag) + suffix;
+        return apiTestFileFolder() + File.separator + toApiTestFilename(tag) + suffix;
     }
 
     public boolean shouldOverwrite(String filename) {
@@ -3325,6 +3417,14 @@ public class DefaultCodegen {
         this.removeOperationIdPrefix = removeOperationIdPrefix;
     }
 
+    public boolean isHideGenerationTimestamp() {
+        return hideGenerationTimestamp;
+    }
+
+    public void setHideGenerationTimestamp(boolean hideGenerationTimestamp) {
+        this.hideGenerationTimestamp = hideGenerationTimestamp;
+    }
+
     /**
      * All library templates supported.
      * (key: library name, value: library description)
@@ -3340,8 +3440,17 @@ public class DefaultCodegen {
      * @param library Library template
      */
     public void setLibrary(String library) {
-        if (library != null && !supportedLibraries.containsKey(library))
-            throw new RuntimeException("unknown library: " + library);
+        if (library != null && !supportedLibraries.containsKey(library)) {
+            StringBuilder sb = new StringBuilder("Unknown library: " + library + "\nAvailable libraries:");
+            if(supportedLibraries.size() == 0) {
+                sb.append("\n  ").append("NONE");
+            } else {
+                for (String lib : supportedLibraries.keySet()) {
+                    sb.append("\n  ").append(lib);
+                }
+            }
+            throw new RuntimeException(sb.toString());
+        }
         this.library = library;
     }
 
@@ -3502,7 +3611,7 @@ public class DefaultCodegen {
 
         // tag starts with numbers
         if (tag.matches("^\\d.*")) {
-            tag = "_" + tag;
+            tag = "Class" + tag;
         }
 
         return tag;
@@ -3551,7 +3660,12 @@ public class DefaultCodegen {
             return;
         }
 
-        if (Boolean.TRUE.equals(property.isString)) {
+        if (Boolean.TRUE.equals(property.isUuid) && Boolean.TRUE.equals(property.isString)) {
+            parameter.isUuid = true;
+        } else if (Boolean.TRUE.equals(property.isByteArray)) {
+            parameter.isByteArray = true;
+            parameter.isPrimitiveType = true;
+        } else if (Boolean.TRUE.equals(property.isString)) {
             parameter.isString = true;
             parameter.isPrimitiveType = true;
         } else if (Boolean.TRUE.equals(property.isBoolean)) {
@@ -3569,18 +3683,14 @@ public class DefaultCodegen {
         } else if (Boolean.TRUE.equals(property.isFloat)) {
             parameter.isFloat = true;
             parameter.isPrimitiveType = true;
-        } else if (Boolean.TRUE.equals(property.isByteArray)) {
-            parameter.isByteArray = true;
+        }  else if (Boolean.TRUE.equals(property.isNumber)) {
+            parameter.isNumber = true;
             parameter.isPrimitiveType = true;
         } else if (Boolean.TRUE.equals(property.isBinary)) {
             parameter.isByteArray = true;
             parameter.isPrimitiveType = true;
         } else if (Boolean.TRUE.equals(property.isFile)) {
             parameter.isFile = true;
-        } else if (Boolean.TRUE.equals(property.isUuid)) {
-            parameter.isUuid = true;
-            // file is *not* a primitive type
-            //parameter.isPrimitiveType = true;
         } else if (Boolean.TRUE.equals(property.isDate)) {
             parameter.isDate = true;
             parameter.isPrimitiveType = true;
@@ -3718,7 +3828,84 @@ public class DefaultCodegen {
         return booleanValue;
     }
 
+    protected List<Map<String, String>> getExamples(Map<String, Model> definitions, Map<String, Object> examples, List<String> mediaTypes, Object object) {
+        if (object instanceof Property) {
+            Property responseProperty = (Property) object;
+            return new ExampleGenerator(definitions).generate(examples, mediaTypes, responseProperty);
+        }
+        // this must be a model name instead
+        return new ExampleGenerator(definitions).generate(examples, mediaTypes, object.toString());
+    }
+
     public void writePropertyBack(String propertyKey, boolean value) {
         additionalProperties.put(propertyKey, value);
+    }
+
+    protected void addOption(String key, String description) {
+        addOption(key, description, null);
+    }
+
+    protected void addOption(String key, String description, String defaultValue) {
+        CliOption option = new CliOption(key, description);
+        if (defaultValue != null)
+            option.defaultValue(defaultValue);
+        cliOptions.add(option);
+    }
+
+    protected void addSwitch(String key, String description, Boolean defaultValue) {
+        CliOption option = CliOption.newBoolean(key, description);
+        if (defaultValue != null)
+            option.defaultValue(defaultValue.toString());
+        cliOptions.add(option);
+    }
+
+    protected void configureDataForTestTemplate(CodegenOperation codegenOperation) {
+        final String httpMethod = codegenOperation.httpMethod;
+        String path = codegenOperation.path;
+        if ("GET".equalsIgnoreCase(httpMethod)) {
+            codegenOperation.vendorExtensions.put("x-is-get-method", Boolean.TRUE);
+        }
+        if ("POST".equalsIgnoreCase(httpMethod)) {
+            codegenOperation.vendorExtensions.put("x-is-post-method", Boolean.TRUE);
+        }
+        if ("PUT".equalsIgnoreCase(httpMethod)) {
+            codegenOperation.vendorExtensions.put("x-is-put-method", Boolean.TRUE);
+        }
+        if ("DELETE".equalsIgnoreCase(httpMethod)) {
+            codegenOperation.vendorExtensions.put("x-is-delete-method", Boolean.TRUE);
+        }
+        if ("HEAD".equalsIgnoreCase(httpMethod)) {
+            codegenOperation.vendorExtensions.put("x-is-head-method", Boolean.TRUE);
+        }
+        if ("TRACE".equalsIgnoreCase(httpMethod)) {
+            codegenOperation.vendorExtensions.put("x-is-trace-method", Boolean.TRUE);
+        }
+        if ("PATCH".equalsIgnoreCase(httpMethod)) {
+            codegenOperation.vendorExtensions.put("x-is-head-method", Boolean.TRUE);
+        }
+        if ("OPTIONS".equalsIgnoreCase(httpMethod)) {
+            codegenOperation.vendorExtensions.put("x-is-options-method", Boolean.TRUE);
+        }
+        if (path.contains("{")) {
+            while(path.contains("{")) {
+                final String pathParam = path.substring(path.indexOf("{"), path.indexOf("}") + 1);
+                final String paramName = pathParam.replace("{", StringUtils.EMPTY).replace("}", StringUtils.EMPTY);
+
+                CodegenParameter codegenParameter = null;
+
+                for (CodegenParameter parameter : codegenOperation.pathParams) {
+                    if (parameter.baseName.equalsIgnoreCase(paramName)) {
+                        codegenParameter = parameter;
+                        break;
+                    }
+                }
+
+                if (codegenParameter == null || codegenParameter.testExample == null) {
+                    return;
+                }
+                path = path.replace(pathParam, codegenParameter.testExample);
+            }
+        }
+        codegenOperation.testPath = path;
     }
 }

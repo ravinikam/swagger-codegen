@@ -47,6 +47,9 @@ public class RustClientCodegen extends DefaultCodegen implements CodegenConfig {
         modelDocTemplateFiles.put("model_doc.mustache", ".md");
         apiDocTemplateFiles.put("api_doc.mustache", ".md");
 
+        // default HIDE_GENERATION_TIMESTAMP to true
+        hideGenerationTimestamp = Boolean.TRUE;
+
         embeddedTemplateDir = templateDir = "rust";
 
         setReservedWordsLowerCase(
@@ -99,8 +102,7 @@ public class RustClientCodegen extends DefaultCodegen implements CodegenConfig {
         typeMapping.put("file", "File");
         typeMapping.put("binary", "Vec<u8>");
         typeMapping.put("ByteArray", "String");
-        // TODO  what should 'object' mapped to
-        typeMapping.put("object", "Object");
+        typeMapping.put("object", "Value");
 
         // no need for rust
         //importMapping = new HashMap<String, String>();
@@ -110,7 +112,7 @@ public class RustClientCodegen extends DefaultCodegen implements CodegenConfig {
                 .defaultValue("swagger"));
         cliOptions.add(new CliOption(CodegenConstants.PACKAGE_VERSION, "Rust package version.")
                 .defaultValue("1.0.0"));
-        cliOptions.add(new CliOption(CodegenConstants.HIDE_GENERATION_TIMESTAMP, "hides the timestamp when files were generated")
+        cliOptions.add(new CliOption(CodegenConstants.HIDE_GENERATION_TIMESTAMP, CodegenConstants.HIDE_GENERATION_TIMESTAMP_DESC)
                 .defaultValue(Boolean.TRUE.toString()));
 
     }
@@ -118,14 +120,6 @@ public class RustClientCodegen extends DefaultCodegen implements CodegenConfig {
     @Override
     public void processOpts() {
         super.processOpts();
-
-        // default HIDE_GENERATION_TIMESTAMP to true
-        if (!additionalProperties.containsKey(CodegenConstants.HIDE_GENERATION_TIMESTAMP)) {
-            additionalProperties.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, Boolean.TRUE.toString());
-        } else {
-            additionalProperties.put(CodegenConstants.HIDE_GENERATION_TIMESTAMP,
-                    Boolean.valueOf(additionalProperties().get(CodegenConstants.HIDE_GENERATION_TIMESTAMP).toString()));
-        }
 
         if (additionalProperties.containsKey(CodegenConstants.PACKAGE_NAME)) {
             setPackageName((String) additionalProperties.get(CodegenConstants.PACKAGE_NAME));

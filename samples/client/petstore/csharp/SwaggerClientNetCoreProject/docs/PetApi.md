@@ -20,8 +20,6 @@ Method | HTTP request | Description
 
 Add a new pet to the store
 
-
-
 ### Example
 ```csharp
 using System;
@@ -82,8 +80,6 @@ void (empty response body)
 > void DeletePet (long? petId, string apiKey = null)
 
 Deletes a pet
-
-
 
 ### Example
 ```csharp
@@ -168,7 +164,7 @@ namespace Example
             Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             var apiInstance = new PetApi();
-            var status = new List<string>(); // List<string> | Status values that need to be considered for filter
+            var status = status_example;  // List<string> | Status values that need to be considered for filter
 
             try
             {
@@ -189,7 +185,7 @@ namespace Example
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **status** | [**List&lt;string&gt;**](string.md)| Status values that need to be considered for filter | 
+ **status** | **List&lt;string&gt;**| Status values that need to be considered for filter | 
 
 ### Return type
 
@@ -293,9 +289,9 @@ namespace Example
         public void main()
         {
             // Configure API key authorization: api_key
-            Configuration.Default.ApiKey.Add("api_key", "YOUR_API_KEY");
+            Configuration.Default.AddApiKey("api_key", "YOUR_API_KEY");
             // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("api_key", "Bearer");
+            // Configuration.Default.AddApiKeyPrefix("api_key", "Bearer");
 
             var apiInstance = new PetApi();
             var petId = 789;  // long? | ID of pet to return
@@ -341,8 +337,6 @@ Name | Type | Description  | Notes
 > void UpdatePet (Pet body)
 
 Update an existing pet
-
-
 
 ### Example
 ```csharp
@@ -404,8 +398,6 @@ void (empty response body)
 > void UpdatePetWithForm (long? petId, string name = null, string status = null)
 
 Updates a pet in the store with form data
-
-
 
 ### Example
 ```csharp
@@ -471,8 +463,6 @@ void (empty response body)
 > ApiResponse UploadFile (long? petId, string additionalMetadata = null, System.IO.Stream file = null)
 
 uploads an image
-
-
 
 ### Example
 ```csharp

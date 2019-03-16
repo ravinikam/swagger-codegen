@@ -16,7 +16,6 @@ import { Api } from './Api';
 import { AuthStorage } from './AuthStorage';
 import {
   User,
-  Array&lt;User&gt;,
 } from './models';
 
 /**
@@ -86,6 +85,7 @@ export class UserApi extends Api {
    * Creates a new UserApi class.
    *
    * @param httpClient The Aurelia HTTP client to be injected.
+   * @param authStorage A storage for authentication data.
    */
   constructor(httpClient: HttpClient, authStorage: AuthStorage) {
     super(httpClient, authStorage);
@@ -93,7 +93,6 @@ export class UserApi extends Api {
 
   /**
    * Create user
-   *
    * This can only be done by the logged in user.
    * @param params.body Created user object
    */
@@ -124,7 +123,6 @@ export class UserApi extends Api {
 
   /**
    * Creates list of users with given input array
-   *
    * 
    * @param params.body List of user object
    */
@@ -155,7 +153,6 @@ export class UserApi extends Api {
 
   /**
    * Creates list of users with given input array
-   *
    * 
    * @param params.body List of user object
    */
@@ -186,7 +183,6 @@ export class UserApi extends Api {
 
   /**
    * Delete user
-   *
    * This can only be done by the logged in user.
    * @param params.username The name that needs to be deleted
    */
@@ -196,7 +192,7 @@ export class UserApi extends Api {
 
     // Create URL to call
     const url = `${this.basePath}/user/{username}`
-      .replace(`{${'username'}}`, `${params['username']}`);
+      .replace(`{${'username'}}`, encodeURIComponent(`${params['username']}`));
 
     const response = await this.httpClient.createRequest(url)
       // Set HTTP method
@@ -215,9 +211,8 @@ export class UserApi extends Api {
 
   /**
    * Get user by user name
-   *
    * 
-   * @param params.username The name that needs to be fetched. Use user1 for testing. 
+   * @param params.username The name that needs to be fetched. Use user1 for testing.
    */
   async getUserByName(params: IGetUserByNameParams): Promise<User> {
     // Verify required parameters are set
@@ -225,7 +220,7 @@ export class UserApi extends Api {
 
     // Create URL to call
     const url = `${this.basePath}/user/{username}`
-      .replace(`{${'username'}}`, `${params['username']}`);
+      .replace(`{${'username'}}`, encodeURIComponent(`${params['username']}`));
 
     const response = await this.httpClient.createRequest(url)
       // Set HTTP method
@@ -244,7 +239,6 @@ export class UserApi extends Api {
 
   /**
    * Logs user into the system
-   *
    * 
    * @param params.username The user name for login
    * @param params.password The password for login in clear text
@@ -279,7 +273,6 @@ export class UserApi extends Api {
 
   /**
    * Logs out current logged in user session
-   *
    * 
    */
   async logoutUser(): Promise<any> {
@@ -305,7 +298,6 @@ export class UserApi extends Api {
 
   /**
    * Updated user
-   *
    * This can only be done by the logged in user.
    * @param params.username name that need to be deleted
    * @param params.body Updated user object
@@ -317,7 +309,7 @@ export class UserApi extends Api {
 
     // Create URL to call
     const url = `${this.basePath}/user/{username}`
-      .replace(`{${'username'}}`, `${params['username']}`);
+      .replace(`{${'username'}}`, encodeURIComponent(`${params['username']}`));
 
     const response = await this.httpClient.createRequest(url)
       // Set HTTP method

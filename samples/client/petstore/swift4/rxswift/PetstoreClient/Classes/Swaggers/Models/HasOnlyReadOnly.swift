@@ -8,17 +8,17 @@
 import Foundation
 
 
-open class HasOnlyReadOnly: Codable {
+
+public struct HasOnlyReadOnly: Codable {
 
     public var bar: String?
     public var foo: String?
 
-    public init() {}
-
-
-    private enum CodingKeys: String, CodingKey { 
-        case bar = "bar"
-        case foo = "foo"
+    public init(bar: String?, foo: String?) {
+        self.bar = bar
+        self.foo = foo
     }
 
+
 }
+

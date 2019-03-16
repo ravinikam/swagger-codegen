@@ -18,6 +18,7 @@ import OuterBoolean from '../model/OuterBoolean';
 import OuterComposite from '../model/OuterComposite';
 import OuterNumber from '../model/OuterNumber';
 import OuterString from '../model/OuterString';
+import User from '../model/User';
 
 /**
 * Fake service.
@@ -217,6 +218,60 @@ export default class FakeApi {
      */
     fakeOuterStringSerialize(opts) {
       return this.fakeOuterStringSerializeWithHttpInfo(opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
+     * @param {module:model/User} body 
+     * @param {String} query 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    testBodyWithQueryParamsWithHttpInfo(body, query) {
+      let postBody = body;
+
+      // verify the required parameter 'body' is set
+      if (body === undefined || body === null) {
+        throw new Error("Missing the required parameter 'body' when calling testBodyWithQueryParams");
+      }
+
+      // verify the required parameter 'query' is set
+      if (query === undefined || query === null) {
+        throw new Error("Missing the required parameter 'query' when calling testBodyWithQueryParams");
+      }
+
+
+      let pathParams = {
+      };
+      let queryParams = {
+        'query': query
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = [];
+      let returnType = null;
+
+      return this.apiClient.callApi(
+        '/fake/body-with-query-params', 'PUT',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType
+      );
+    }
+
+    /**
+     * @param {module:model/User} body 
+     * @param {String} query 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    testBodyWithQueryParams(body, query) {
+      return this.testBodyWithQueryParamsWithHttpInfo(body, query)
         .then(function(response_and_data) {
           return response_and_data.data;
         });
@@ -445,6 +500,56 @@ export default class FakeApi {
      */
     testEnumParameters(opts) {
       return this.testEnumParametersWithHttpInfo(opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
+     * test inline additionalProperties
+     * 
+     * @param {Object} param request body
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    testInlineAdditionalPropertiesWithHttpInfo(param) {
+      let postBody = param;
+
+      // verify the required parameter 'param' is set
+      if (param === undefined || param === null) {
+        throw new Error("Missing the required parameter 'param' when calling testInlineAdditionalProperties");
+      }
+
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = [];
+      let returnType = null;
+
+      return this.apiClient.callApi(
+        '/fake/inline-additionalProperties', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType
+      );
+    }
+
+    /**
+     * test inline additionalProperties
+     * 
+     * @param {Object} param request body
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    testInlineAdditionalProperties(param) {
+      return this.testInlineAdditionalPropertiesWithHttpInfo(param)
         .then(function(response_and_data) {
           return response_and_data.data;
         });

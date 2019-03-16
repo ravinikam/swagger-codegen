@@ -31,6 +31,7 @@ feature -- API Access
 			-- argument: order_id ID of the order that needs to be deleted (required)
 			-- 
 			-- 
+		require
 		local
   			l_path: STRING
   			l_request: API_CLIENT_REQUEST
@@ -41,6 +42,7 @@ feature -- API Access
 			
 			l_path := "/store/order/{order_id}"
 			l_path.replace_substring_all ("{"+"order_id"+"}", api_client.url_encode (order_id.out))
+
 
 			if attached {STRING} api_client.select_header_accept (<<"application/xml", "application/json">>)  as l_accept then
 				l_request.add_header(l_accept,"Accept");
@@ -59,6 +61,7 @@ feature -- API Access
 			-- 
 			-- 
 			-- Result STRING_TABLE[INTEGER_32]
+		require
 		local
   			l_path: STRING
   			l_request: API_CLIENT_REQUEST
@@ -68,6 +71,7 @@ feature -- API Access
 			create l_request
 			
 			l_path := "/store/inventory"
+
 
 			if attached {STRING} api_client.select_header_accept (<<"application/json">>)  as l_accept then
 				l_request.add_header(l_accept,"Accept");
@@ -92,6 +96,9 @@ feature -- API Access
 			-- 
 			-- 
 			-- Result ORDER
+		require
+			order_id_is_less_or_equal_than: order_id <= 5 
+     		order_id_is_greater_or_equal_than: order_id >= 1 
 		local
   			l_path: STRING
   			l_request: API_CLIENT_REQUEST
@@ -102,6 +109,7 @@ feature -- API Access
 			
 			l_path := "/store/order/{order_id}"
 			l_path.replace_substring_all ("{"+"order_id"+"}", api_client.url_encode (order_id.out))
+
 
 			if attached {STRING} api_client.select_header_accept (<<"application/xml", "application/json">>)  as l_accept then
 				l_request.add_header(l_accept,"Accept");
@@ -126,6 +134,7 @@ feature -- API Access
 			-- 
 			-- 
 			-- Result ORDER
+		require
 		local
   			l_path: STRING
   			l_request: API_CLIENT_REQUEST
@@ -135,6 +144,7 @@ feature -- API Access
 			create l_request
 			l_request.set_body(body)
 			l_path := "/store/order"
+
 
 			if attached {STRING} api_client.select_header_accept (<<"application/xml", "application/json">>)  as l_accept then
 				l_request.add_header(l_accept,"Accept");

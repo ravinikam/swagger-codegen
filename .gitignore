@@ -50,6 +50,7 @@ samples/server/petstore/nodejs/node_modules
 samples/server/petstore/nodejs-server/node_modules
 
 # qt5 cpp
+*.pro.user
 samples/client/petstore/qt5cpp/PetStore/moc_*
 samples/client/petstore/qt5cpp/PetStore/*.o
 samples/client/petstore/qt5cpp/build-*
@@ -89,6 +90,11 @@ samples/client/petstore/silex/SwaggerServer/composer.lock
 samples/client/petstore/silex/SwaggerServer/venodr/
 **/vendor/
 **/composer.lock
+
+#PHP-Symfony
+samples/server/petstore/php-symfony/SymfonyBundle-php/Tests/cache/
+samples/server/petstore/php-symfony/SymfonyBundle-php/Tests/logs/
+
 
 # Perl
 samples/client/petstore/perl/deep_module_test/
@@ -174,3 +180,11 @@ samples/client/petstore/kotlin/src/main/kotlin/test/
 .stack-work
 .cabal-sandbox
 cabal.project.local
+
+# R
+.Rproj.user
+
+# elixir
+samples/client/petstore/elixir/_build/
+samples/client/petstore/elixir/deps/
+samples/client/petstore/elixir/mix.lock

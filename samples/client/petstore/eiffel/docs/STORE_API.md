@@ -54,7 +54,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**STRING_TABLE[INTEGER_32]**](STRING_TABLE.md)
+**STRING_TABLE[INTEGER_32]**
 
 ### Authorization
 

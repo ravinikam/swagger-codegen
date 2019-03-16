@@ -33,12 +33,14 @@ public class SpringCodegen extends AbstractJavaCodegen
     public static final String SPRING_CLOUD_LIBRARY = "spring-cloud";
     public static final String IMPLICIT_HEADERS = "implicitHeaders";
     public static final String SWAGGER_DOCKET_CONFIG = "swaggerDocketConfig";
+    public static final String TARGET_OPENFEIGN = "generateForOpenFeign";
 
     protected String title = "swagger-petstore";
     protected String configPackage = "io.swagger.configuration";
     protected String basePackage = "io.swagger";
     protected boolean interfaceOnly = false;
     protected boolean delegatePattern = false;
+    protected boolean delegateMethod = false;
     protected boolean singleContentTypes = false;
     protected boolean java8 = false;
     protected boolean async = false;
@@ -48,11 +50,12 @@ public class SpringCodegen extends AbstractJavaCodegen
     protected boolean implicitHeaders = false;
     protected boolean swaggerDocketConfig = false;
     protected boolean useOptional = false;
+    protected boolean openFeign = false;
 
     public SpringCodegen() {
         super();
         outputFolder = "generated-code/javaSpring";
-        apiTestTemplateFiles.clear(); // TODO: add test template
+        apiTestTemplateFiles.clear();
         embeddedTemplateDir = templateDir = "JavaSpring";
         apiPackage = "io.swagger.api";
         modelPackage = "io.swagger.model";
@@ -80,6 +83,7 @@ public class SpringCodegen extends AbstractJavaCodegen
         cliOptions.add(CliOption.newBoolean(SWAGGER_DOCKET_CONFIG, "Generate Spring Swagger Docket configuration class."));
         cliOptions.add(CliOption.newBoolean(USE_OPTIONAL,
                 "Use Optional container for optional parameters"));
+        cliOptions.add(CliOption.newBoolean(TARGET_OPENFEIGN,"Generate for usage with OpenFeign (instead of feign)"));
 
         supportedLibraries.put(DEFAULT_LIBRARY, "Spring-boot Server application using the SpringFox integration.");
         supportedLibraries.put(SPRING_MVC_LIBRARY, "Spring-MVC Server application using the SpringFox integration.");
@@ -177,13 +181,17 @@ public class SpringCodegen extends AbstractJavaCodegen
         if (additionalProperties.containsKey(USE_TAGS)) {
             this.setUseTags(Boolean.valueOf(additionalProperties.get(USE_TAGS).toString()));
         }
-        
+
         if (additionalProperties.containsKey(USE_BEANVALIDATION)) {
             this.setUseBeanValidation(convertPropertyToBoolean(USE_BEANVALIDATION));
         }
 
         if (additionalProperties.containsKey(USE_OPTIONAL)) {
             this.setUseOptional(convertPropertyToBoolean(USE_OPTIONAL));
+        }
+
+        if (additionalProperties.containsKey(TARGET_OPENFEIGN)) {
+            this.setOpenFeign(convertPropertyToBoolean(TARGET_OPENFEIGN));
         }
 
         if (useBeanValidation) {
@@ -200,19 +208,26 @@ public class SpringCodegen extends AbstractJavaCodegen
 
         typeMapping.put("file", "Resource");
         importMapping.put("Resource", "org.springframework.core.io.Resource");
-        
+
         if (useOptional) {
             writePropertyBack(USE_OPTIONAL, useOptional);
         }
 
         if (this.interfaceOnly && this.delegatePattern) {
-            throw new IllegalArgumentException(
-                    String.format("Can not generate code with `%s` and `%s` both true.", DELEGATE_PATTERN, INTERFACE_ONLY));
+            if (this.java8) {
+                this.delegateMethod = true;
+                additionalProperties.put("delegate-method", true);
+            } else {
+                throw new IllegalArgumentException(
+                        String.format("Can not generate code with `%s` and `%s` true while `%s` is false.",
+                                DELEGATE_PATTERN, INTERFACE_ONLY, JAVA_8));
+            }
         }
 
+        supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
+        supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
+
         if (!this.interfaceOnly) {
-            supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
-            supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
 
             if (library.equals(DEFAULT_LIBRARY)) {
                 supportingFiles.add(new SupportingFile("homeController.mustache",
@@ -246,8 +261,6 @@ public class SpringCodegen extends AbstractJavaCodegen
                     additionalProperties.put(SINGLE_CONTENT_TYPES, "true");
                     this.setSingleContentTypes(true);
                 }
-                additionalProperties.put("useSpringCloudClient", true);
-
             } else {
                 apiTemplateFiles.put("apiController.mustache", "Controller.java");
                 supportingFiles.add(new SupportingFile("apiException.mustache",
@@ -274,13 +287,13 @@ public class SpringCodegen extends AbstractJavaCodegen
                         (sourceFolder + File.separator + configPackage).replace(".", java.io.File.separator), "JacksonConfiguration.java"));
             }
         }
-        
-        if (!this.delegatePattern && this.java8) {
+
+        if ((!this.delegatePattern && this.java8) || this.delegateMethod) {
             additionalProperties.put("jdk8-no-delegate", true);
         }
 
 
-        if (this.delegatePattern) {
+        if (this.delegatePattern && !this.delegateMethod) {
             additionalProperties.put("isDelegate", "true");
             apiTemplateFiles.put("apiDelegate.mustache", "Delegate.java");
         }
@@ -291,12 +304,12 @@ public class SpringCodegen extends AbstractJavaCodegen
             if (this.async) {
                 additionalProperties.put(RESPONSE_WRAPPER, "CompletableFuture");
             }
-            typeMapping.put("date", "LocalDate");
-            typeMapping.put("DateTime", "OffsetDateTime");
-            importMapping.put("LocalDate", "java.time.LocalDate");
-            importMapping.put("OffsetDateTime", "java.time.OffsetDateTime");
         } else if (this.async) {
             additionalProperties.put(RESPONSE_WRAPPER, "Callable");
+        }
+
+        if(this.openFeign){
+            additionalProperties.put("isOpenFeign", "true");
         }
 
         // Some well-known Spring or Spring-Cloud response wrappers
@@ -310,7 +323,7 @@ public class SpringCodegen extends AbstractJavaCodegen
                 additionalProperties.put(RESPONSE_WRAPPER, "org.springframework.util.concurrent.ListenableFuture");
                 break;
             case "DeferredResult":
-                additionalProperties.put(RESPONSE_WRAPPER, "org.springframework.web.context.request.DeferredResult");
+                additionalProperties.put(RESPONSE_WRAPPER, "org.springframework.web.context.request.async.DeferredResult");
                 break;
             case "HystrixCommand":
                 additionalProperties.put(RESPONSE_WRAPPER, "com.netflix.hystrix.HystrixCommand");
@@ -556,6 +569,14 @@ public class SpringCodegen extends AbstractJavaCodegen
     }
 
     @Override
+    public String toApiTestFilename(String name) {
+        if(library.equals(SPRING_MVC_LIBRARY)) {
+            return toApiName(name) + "ControllerIT";
+        }
+        return toApiName(name) + "ControllerIntegrationTest";
+    }
+
+    @Override
     public void setParameterExampleValue(CodegenParameter p) {
         String type = p.baseType;
         if (type == null) {
@@ -663,7 +684,7 @@ public class SpringCodegen extends AbstractJavaCodegen
 
         return objs;
     }
-    
+
     public void setUseBeanValidation(boolean useBeanValidation) {
         this.useBeanValidation = useBeanValidation;
     }
@@ -671,5 +692,9 @@ public class SpringCodegen extends AbstractJavaCodegen
     @Override
     public void setUseOptional(boolean useOptional) {
         this.useOptional = useOptional;
+    }
+
+    public void setOpenFeign(boolean openFeign) {
+        this.openFeign = openFeign;
     }
 }

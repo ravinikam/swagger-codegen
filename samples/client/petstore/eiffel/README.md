@@ -21,15 +21,18 @@ All URIs are relative to *http://petstore.swagger.io:80/v2*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*ANOTHERFAKE_API* | [**test_special_tags**](docs/ANOTHERFAKE_API.md#test_special_tags) | **Patch** /another-fake/dummy | To test special tags
 *FAKE_API* | [**fake_outer_boolean_serialize**](docs/FAKE_API.md#fake_outer_boolean_serialize) | **Post** /fake/outer/boolean | 
 *FAKE_API* | [**fake_outer_composite_serialize**](docs/FAKE_API.md#fake_outer_composite_serialize) | **Post** /fake/outer/composite | 
 *FAKE_API* | [**fake_outer_number_serialize**](docs/FAKE_API.md#fake_outer_number_serialize) | **Post** /fake/outer/number | 
 *FAKE_API* | [**fake_outer_string_serialize**](docs/FAKE_API.md#fake_outer_string_serialize) | **Post** /fake/outer/string | 
+*FAKE_API* | [**test_body_with_query_params**](docs/FAKE_API.md#test_body_with_query_params) | **Put** /fake/body-with-query-params | 
 *FAKE_API* | [**test_client_model**](docs/FAKE_API.md#test_client_model) | **Patch** /fake | To test \&quot;client\&quot; model
 *FAKE_API* | [**test_endpoint_parameters**](docs/FAKE_API.md#test_endpoint_parameters) | **Post** /fake | Fake endpoint for testing various parameters 假端點 偽のエンドポイント 가짜 엔드 포인트 
 *FAKE_API* | [**test_enum_parameters**](docs/FAKE_API.md#test_enum_parameters) | **Get** /fake | To test enum parameters
+*FAKE_API* | [**test_inline_additional_properties**](docs/FAKE_API.md#test_inline_additional_properties) | **Post** /fake/inline-additionalProperties | test inline additionalProperties
 *FAKE_API* | [**test_json_form_data**](docs/FAKE_API.md#test_json_form_data) | **Get** /fake/jsonFormData | test json serialization of form data
-*FAKE_CLASSNAME_TAGS123_API* | [**test_classname**](docs/FAKE_CLASSNAME_TAGS123_API.md#test_classname) | **Patch** /fake_classname_test | To test class name in snake case
+*FAKECLASSNAMETAGS123_API* | [**test_classname**](docs/FAKECLASSNAMETAGS123_API.md#test_classname) | **Patch** /fake_classname_test | To test class name in snake case
 *PET_API* | [**add_pet**](docs/PET_API.md#add_pet) | **Post** /pet | Add a new pet to the store
 *PET_API* | [**delete_pet**](docs/PET_API.md#delete_pet) | **Delete** /pet/{petId} | Deletes a pet
 *PET_API* | [**find_pets_by_status**](docs/PET_API.md#find_pets_by_status) | **Get** /pet/findByStatus | Finds Pets by status
@@ -99,6 +102,12 @@ Class | Method | HTTP request | Description
 - **Type**: API key 
 - **API key parameter name**: api_key
 - **Location**: HTTP header
+
+## api_key_query
+
+- **Type**: API key 
+- **API key parameter name**: api_key_query
+- **Location**: URL query string
 
 ## http_basic_test
 

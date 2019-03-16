@@ -78,7 +78,8 @@ public class FlaskConnexionCodegen extends DefaultCodegen implements CodegenConf
                     "and", "del", "from", "not", "while", "as", "elif", "global", "or", "with",
                     "assert", "else", "if", "pass", "yield", "break", "except", "import",
                     "print", "class", "exec", "in", "raise", "continue", "finally", "is",
-                    "return", "def", "for", "lambda", "try", "self", "None", "True", "False", "nonlocal"));
+                    "return", "def", "for", "lambda", "try", "self", "None", "True", "False", "nonlocal",
+                    "float", "int", "str", "date", "datetime"));
 
         // set the output folder here
         outputFolder = "generated-code/connexion";
@@ -249,7 +250,7 @@ public class FlaskConnexionCodegen extends DefaultCodegen implements CodegenConf
 
     /**
      * Escapes a reserved word as defined in the `reservedWords` array. Handle escaping
-     * those terms here.  This logic is only called if a variable matches the reseved words
+     * those terms here.  This logic is only called if a variable matches the reserved words
      *
      * @return the escaped term
      */
@@ -473,13 +474,18 @@ public class FlaskConnexionCodegen extends DefaultCodegen implements CodegenConf
 
     @Override
     public String toOperationId(String operationId) {
-        operationId = super.toOperationId(operationId); // FIXME: a parameter should not be assigned. Also declare the methods parameters as 'final'.
-        // Use the part after the last dot, e.g.
-        //     controllers.defaultController.addPet => addPet
-        operationId = operationId.replaceAll(".*\\.", "");
-        // Need to underscore it since it has been processed via removeNonNameElementToCamelCase, e.g.
-        //     addPet => add_pet
-        return underscore(operationId);
+        // throw exception if method name is empty (should not occur as an auto-generated method name will be used)
+        if (StringUtils.isEmpty(operationId)) {
+            throw new RuntimeException("Empty method name (operationId) not allowed");
+        }
+
+        // method name cannot use reserved keyword, e.g. return
+        if (isReservedWord(operationId)) {
+            LOGGER.warn(operationId + " (reserved word) cannot be used as method name. Renamed to " + underscore(sanitizeName("call_" + operationId)));
+            operationId = "call_" + operationId;
+        }
+
+        return underscore(sanitizeName(operationId));
     }
 
     /**
@@ -663,6 +669,12 @@ public class FlaskConnexionCodegen extends DefaultCodegen implements CodegenConf
     }
 
     @Override
+    public Map<String, Object> postProcessModels(Map<String, Object> objs) {
+        // process enum in models
+        return postProcessModelsEnum(objs);
+    }
+
+    @Override
     public void postProcessParameter(CodegenParameter parameter){
         postProcessPattern(parameter.pattern, parameter.vendorExtensions);
     }
@@ -676,10 +688,8 @@ public class FlaskConnexionCodegen extends DefaultCodegen implements CodegenConf
         if(pattern != null) {
             int i = pattern.lastIndexOf('/');
 
-            //Must follow Perl /pattern/modifiers convention
             if(pattern.charAt(0) != '/' || i < 2) {
-                throw new IllegalArgumentException("Pattern must follow the Perl "
-                        + "/pattern/modifiers convention. "+pattern+" is not valid.");
+                pattern = String.format("/%s/", pattern);
             }
 
             String regex = pattern.substring(1, i).replace("'", "\\'");

@@ -6,7 +6,7 @@ use Articus\DataTransfer\Annotation as DTA;
 
 /**
  */
-class EnumTest 
+class EnumTest
 {
     /**
      * @DTA\Data(field="enum_string", nullable=true)
@@ -14,6 +14,12 @@ class EnumTest
      * @var string
      */
     public $enum_string;
+    /**
+     * @DTA\Data(field="enum_string_required")
+     * @DTA\Validator(name="Type", options={"type":"string"})
+     * @var string
+     */
+    public $enum_string_required;
     /**
      * @DTA\Data(field="enum_integer", nullable=true)
      * @DTA\Validator(name="Type", options={"type":"int"})
@@ -23,7 +29,7 @@ class EnumTest
     /**
      * @DTA\Data(field="enum_number", nullable=true)
      * @DTA\Validator(name="Type", options={"type":"float"})
-     * @var double
+     * @var float
      */
     public $enum_number;
     /**
@@ -34,4 +40,3 @@ class EnumTest
      */
     public $outer_enum;
 }
-

@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import io.swagger.model.Client;
 import java.util.Date;
 import io.swagger.model.OuterComposite;
+import io.swagger.model.User;
 
 import java.util.List;
 import io.swagger.api.NotFoundException;
@@ -81,6 +82,19 @@ public class FakeApi  {
     throws NotFoundException {
         return delegate.fakeOuterStringSerialize(body);
     }
+    @PUT
+    @Path("/body-with-query-params")
+    @Consumes({ "application/json" })
+    
+    @io.swagger.annotations.ApiOperation(value = "", notes = "", response = Void.class, tags={ "fake", })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = Void.class) })
+    public Response testBodyWithQueryParams(@ApiParam(value = "" ,required=true) User body
+,@ApiParam(value = "",required=true) @QueryParam("query") String query
+)
+    throws NotFoundException {
+        return delegate.testBodyWithQueryParams(body,query);
+    }
     @PATCH
     
     @Consumes({ "application/json" })
@@ -97,13 +111,13 @@ public class FakeApi  {
     
     @Consumes({ "application/xml; charset=utf-8", "application/json; charset=utf-8" })
     @Produces({ "application/xml; charset=utf-8", "application/json; charset=utf-8" })
-    @io.swagger.annotations.ApiOperation(value = "Fake endpoint for testing various parameters 假端點 偽のエンドポイント 가짜 엔드 포인트 ", notes = "Fake endpoint for testing various parameters 假端點 偽のエンドポイント 가짜 엔드 포인트 ", response = void.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Fake endpoint for testing various parameters 假端點 偽のエンドポイント 가짜 엔드 포인트 ", notes = "Fake endpoint for testing various parameters 假端點 偽のエンドポイント 가짜 엔드 포인트 ", response = Void.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "http_basic_test")
     }, tags={ "fake", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid username supplied", response = void.class),
+        @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid username supplied", response = Void.class),
         
-        @io.swagger.annotations.ApiResponse(code = 404, message = "User not found", response = void.class) })
+        @io.swagger.annotations.ApiResponse(code = 404, message = "User not found", response = Void.class) })
     public Response testEndpointParameters(@ApiParam(value = "None", required=true)  @FormParam("number")  BigDecimal number
 ,@ApiParam(value = "None", required=true)  @FormParam("double")  Double _double
 ,@ApiParam(value = "None", required=true)  @FormParam("pattern_without_delimiter")  String patternWithoutDelimiter
@@ -126,11 +140,11 @@ public class FakeApi  {
     
     @Consumes({ "*/*" })
     @Produces({ "*/*" })
-    @io.swagger.annotations.ApiOperation(value = "To test enum parameters", notes = "To test enum parameters", response = void.class, tags={ "fake", })
+    @io.swagger.annotations.ApiOperation(value = "To test enum parameters", notes = "To test enum parameters", response = Void.class, tags={ "fake", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid request", response = void.class),
+        @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid request", response = Void.class),
         
-        @io.swagger.annotations.ApiResponse(code = 404, message = "Not found", response = void.class) })
+        @io.swagger.annotations.ApiResponse(code = 404, message = "Not found", response = Void.class) })
     public Response testEnumParameters(@ApiParam(value = "Form parameter enum test (string array)", allowableValues=">, $")  @FormParam("enum_form_string_array")  List<String> enumFormStringArray
 ,@ApiParam(value = "Form parameter enum test (string)", allowableValues="_abc, -efg, (xyz)", defaultValue="-efg")  @DefaultValue("-efg") @FormParam("enum_form_string")  String enumFormString
 ,@ApiParam(value = "Header parameter enum test (string array)" , allowableValues=">, $")@HeaderParam("enum_header_string_array") List<String> enumHeaderStringArray
@@ -142,5 +156,30 @@ public class FakeApi  {
 )
     throws NotFoundException {
         return delegate.testEnumParameters(enumFormStringArray,enumFormString,enumHeaderStringArray,enumHeaderString,enumQueryStringArray,enumQueryString,enumQueryInteger,enumQueryDouble);
+    }
+    @POST
+    @Path("/inline-additionalProperties")
+    @Consumes({ "application/json" })
+    
+    @io.swagger.annotations.ApiOperation(value = "test inline additionalProperties", notes = "", response = Void.class, tags={ "fake", })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = Void.class) })
+    public Response testInlineAdditionalProperties(@ApiParam(value = "request body" ,required=true) Object param
+)
+    throws NotFoundException {
+        return delegate.testInlineAdditionalProperties(param);
+    }
+    @GET
+    @Path("/jsonFormData")
+    @Consumes({ "application/json" })
+    
+    @io.swagger.annotations.ApiOperation(value = "test json serialization of form data", notes = "", response = Void.class, tags={ "fake", })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = Void.class) })
+    public Response testJsonFormData(@ApiParam(value = "field1", required=true)  @FormParam("param")  String param
+,@ApiParam(value = "field2", required=true)  @FormParam("param2")  String param2
+)
+    throws NotFoundException {
+        return delegate.testJsonFormData(param,param2);
     }
 }

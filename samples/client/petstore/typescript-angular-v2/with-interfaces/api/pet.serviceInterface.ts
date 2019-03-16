@@ -9,12 +9,14 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-
 import { Headers }                                           from '@angular/http';
 
 import { Observable }                                        from 'rxjs/Observable';
 
-import * as models                                           from '../model/models';
+import { ApiResponse } from '../model/apiResponse';
+import { Pet } from '../model/pet';
+
+
 import { Configuration }                                     from '../configuration';
 
 
@@ -43,7 +45,7 @@ export interface PetServiceInterface {
     * Multiple status values can be provided with comma separated strings
     * @param status Status values that need to be considered for filter
     */
-    findPetsByStatus(status: Array<string>, extraHttpRequestParams?: any): Observable<Array<Pet>>;
+    findPetsByStatus(status: Array<'available' | 'pending' | 'sold'>, extraHttpRequestParams?: any): Observable<Array<Pet>>;
 
     /**
     * Finds Pets by tags

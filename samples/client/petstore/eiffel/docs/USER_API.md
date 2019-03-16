@@ -236,7 +236,7 @@ Get user by user name
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **username** | **STRING_32**| The name that needs to be fetched. Use user1 for testing.  | 
+ **username** | **STRING_32**| The name that needs to be fetched. Use user1 for testing. | 
 
 ### Return type
 

@@ -11,6 +11,7 @@ import io.swagger.client.model.Client;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import io.swagger.client.model.OuterComposite;
+import io.swagger.client.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,6 +114,32 @@ public interface FakeApi {
   @POST("/fake/outer/string")
   void fakeOuterStringSerialize(
     @retrofit.http.Body String body, Callback<String> cb
+  );
+  /**
+   * 
+   * Sync method
+   * 
+   * @param body  (required)
+   * @param query  (required)
+   * @return Void
+   */
+  
+  @PUT("/fake/body-with-query-params")
+  Void testBodyWithQueryParams(
+    @retrofit.http.Body User body, @retrofit.http.Query("query") String query
+  );
+
+  /**
+   * 
+   * Async method
+   * @param body  (required)
+   * @param query  (required)
+   * @param cb callback method
+   */
+  
+  @PUT("/fake/body-with-query-params")
+  void testBodyWithQueryParams(
+    @retrofit.http.Body User body, @retrofit.http.Query("query") String query, Callback<Void> cb
   );
   /**
    * To test \&quot;client\&quot; model
@@ -229,6 +256,30 @@ public interface FakeApi {
   @GET("/fake")
   void testEnumParameters(
     @retrofit.http.Field("enum_form_string_array") List<String> enumFormStringArray, @retrofit.http.Field("enum_form_string") String enumFormString, @retrofit.http.Header("enum_header_string_array") List<String> enumHeaderStringArray, @retrofit.http.Header("enum_header_string") String enumHeaderString, @retrofit.http.Query("enum_query_string_array") CSVParams enumQueryStringArray, @retrofit.http.Query("enum_query_string") String enumQueryString, @retrofit.http.Query("enum_query_integer") Integer enumQueryInteger, @retrofit.http.Field("enum_query_double") Double enumQueryDouble, Callback<Void> cb
+  );
+  /**
+   * test inline additionalProperties
+   * Sync method
+   * 
+   * @param param request body (required)
+   * @return Void
+   */
+  
+  @POST("/fake/inline-additionalProperties")
+  Void testInlineAdditionalProperties(
+    @retrofit.http.Body Object param
+  );
+
+  /**
+   * test inline additionalProperties
+   * Async method
+   * @param param request body (required)
+   * @param cb callback method
+   */
+  
+  @POST("/fake/inline-additionalProperties")
+  void testInlineAdditionalProperties(
+    @retrofit.http.Body Object param, Callback<Void> cb
   );
   /**
    * test json serialization of form data
